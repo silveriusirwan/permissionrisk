@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/main_layout">
+    <include layout="@layout/title_bar" />
+    <!--BN set comment to hide legacy UI
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView 
+            style="@style/tab"
+            android:id="@+id/tab_category"
+            android:text="@string/category_tab_name"
+            />
+       	<TextView 
+            style="@style/tab"
+            android:id="@+id/tab_application"
+            android:text="@string/application_tab_name"
+ 			/>
+       	<TextView 
+            style="@style/tab"
+            android:id="@+id/tab_permission"
+            android:text="@string/permission_tab_name"
+            />
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <ListView 
+            android:id="@+id/listviewcategory"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <ListView 
+            android:id="@+id/listviewapplication"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <ListView 
+            android:id="@+id/listviewpermission"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </FrameLayout>-->
+    <TextView
+		android:id="@+id/id_root_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/root_status"/>
+    <TextView
+		android:id="@+id/id_nfc_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_root_status"
+        android:text="@string/nfc_status"/>
+    <TextView
+		android:id="@+id/id_bluetooth_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_nfc_status"
+        android:text="@string/nfc_status"/>
+    <TextView
+		android:id="@+id/id_lock_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_bluetooth_status"
+        android:text="@string/lock_status"/>
+    <TextView
+		android:id="@+id/id_unknown_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_lock_status"
+        android:text="@string/unknown_status"/>
+    <TextView
+		android:id="@+id/id_encrypted_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_unknown_status"
+        android:text="@string/encrypted_status"/>
+	<TextView
+		android:id="@+id/id_location_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_encrypted_status"
+        android:text="@string/location_status"/>
+	<TextView
+		android:id="@+id/id_simlock_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_location_status"
+        android:text="@string/simlock_status"/>
+	<TextView
+		android:id="@+id/id_wifi_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_simlock_status"
+        android:text="@string/wifi_history"/>
+	<TextView
+        android:id="@+id/id_hello_world"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:layout_below="@+id/id_wifi_history"
+        android:text="Test" 
+        android:maxLines = "20"
+		android:scrollbars = "vertical"/>
+</LinearLayout>
