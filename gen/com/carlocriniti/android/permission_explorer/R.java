@@ -23,6 +23,7 @@ public final class R {
         public static final int ic_menu_manage=0x7f020000;
         public static final int ic_menu_refresh=0x7f020001;
         public static final int icon=0x7f020002;
+        public static final int marker2=0x7f020003;
     }
     public static final class id {
         public static final int application_detail_label=0x7f090001;
@@ -37,38 +38,42 @@ public final class R {
         public static final int category_detail_application_list=0x7f09000d;
         public static final int category_detail_description=0x7f09000b;
         public static final int category_detail_name=0x7f09000a;
-        public static final int id_bluetooth_status=0x7f090012;
-        public static final int id_encrypted_status=0x7f090015;
-        public static final int id_hello_world=0x7f090019;
-        public static final int id_location_status=0x7f090016;
-        public static final int id_lock_status=0x7f090013;
-        public static final int id_nfc_status=0x7f090011;
-        public static final int id_root_status=0x7f090010;
-        public static final int id_simlock_status=0x7f090017;
-        public static final int id_unknown_status=0x7f090014;
-        public static final int id_wifi_history=0x7f090018;
+        public static final int id_app_list=0x7f09001c;
+        public static final int id_bluetooth_status=0x7f090013;
+        public static final int id_chart=0x7f09001b;
+        public static final int id_encrypted_status=0x7f090016;
+        public static final int id_hello_world=0x7f09001a;
+        public static final int id_location_status=0x7f090017;
+        public static final int id_lock_status=0x7f090014;
+        public static final int id_nfc_status=0x7f090012;
+        public static final int id_root_status=0x7f090011;
+        public static final int id_simlock_status=0x7f090018;
+        public static final int id_unknown_status=0x7f090015;
+        public static final int id_wifi_history=0x7f090019;
         public static final int listviewapplicationname=0x7f090009;
         public static final int listviewapplicationnameimage=0x7f090008;
         public static final int listviewcategorytext=0x7f09000e;
-        public static final int listviewpermissiontext=0x7f09001e;
-        public static final int main_layout=0x7f09000f;
-        public static final int menu_exportcsv=0x7f090021;
-        public static final int menu_preferences=0x7f090020;
-        public static final int menu_update=0x7f09001f;
-        public static final int permission_detail_application_count=0x7f09001c;
-        public static final int permission_detail_application_list=0x7f09001d;
-        public static final int permission_detail_description=0x7f09001b;
-        public static final int permission_detail_name=0x7f09001a;
+        public static final int listviewpermissiontext=0x7f090021;
+        public static final int main_layout=0x7f090010;
+        public static final int menu_exportcsv=0x7f090024;
+        public static final int menu_preferences=0x7f090023;
+        public static final int menu_update=0x7f090022;
+        public static final int permission_detail_application_count=0x7f09001f;
+        public static final int permission_detail_application_list=0x7f090020;
+        public static final int permission_detail_description=0x7f09001e;
+        public static final int permission_detail_name=0x7f09001d;
+        public static final int tvContent=0x7f09000f;
     }
     public static final class layout {
         public static final int application_detail=0x7f030000;
         public static final int application_list_item=0x7f030001;
         public static final int category_detail=0x7f030002;
         public static final int category_list_item=0x7f030003;
-        public static final int main=0x7f030004;
-        public static final int permission_detail=0x7f030005;
-        public static final int permission_list_item=0x7f030006;
-        public static final int title_bar=0x7f030007;
+        public static final int custom_marker_view=0x7f030004;
+        public static final int main=0x7f030005;
+        public static final int permission_detail=0x7f030006;
+        public static final int permission_list_item=0x7f030007;
+        public static final int title_bar=0x7f030008;
     }
     public static final class menu {
         public static final int menu=0x7f080000;

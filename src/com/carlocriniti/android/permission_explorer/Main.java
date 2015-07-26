@@ -9,32 +9,18 @@
  */
 package com.carlocriniti.android.permission_explorer;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-//import com.example.securityscanner.R;
-//import com.example.securityscanner.MainActivity.LockType;
-
-
-
-
-
-import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,11 +30,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,22 +43,29 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.telephony.TelephonyManager;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.Legend.LegendPosition;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.RadarData;
+import com.github.mikephil.charting.data.RadarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+//import com.example.securityscanner.R;
+//import com.example.securityscanner.MainActivity.LockType;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends Activity {
 	final String TAG = "securityscanner";
@@ -95,6 +88,9 @@ public class Main extends Activity {
 	static TextView simlockStatus;
 	static TextView wifiHistory;
 	static TextView readResult;
+	static RadarChart mchart;
+	static TextView appList;
+	Typeface tf;
 	private List<String> data;
 	private List<String> dataApplication;
 	private List<String> dataWifi;
@@ -143,11 +139,13 @@ public class Main extends Activity {
 		encryptedStatus = (TextView)findViewById(R.id.id_encrypted_status);
 		locationStatus = (TextView)findViewById(R.id.id_location_status);
 		simlockStatus = (TextView)findViewById(R.id.id_simlock_status);
-		wifiHistory = (TextView) findViewById(R.id.id_wifi_history); 
+		wifiHistory = (TextView) findViewById(R.id.id_wifi_history);
+		appList = (TextView) findViewById(R.id.id_app_list);
 		
 		data = new ArrayList<String>();
 		
-		
+		mchart = (RadarChart) findViewById(R.id.id_chart);
+		tf = Typeface.createFromAsset(getAssets(), "TIMES.TTF");
 		NfcAdapter nfcAdpt = NfcAdapter.getDefaultAdapter(this.getApplicationContext());	
 		if(nfcAdpt!=null)
 		{
@@ -395,7 +393,7 @@ public class Main extends Activity {
         }           
             readResult.setText(textHasil);
             readResult.setMovementMethod(new ScrollingMovementMethod());
-        */
+        */   
     }
     
     //BN add method from security scanner
@@ -1026,7 +1024,9 @@ public class Main extends Activity {
 			countRisk(multimapPermission);
 			writeCSV(mArrayList);
 			permissionListCursor.close();
-        
+//			mchart.getYAxis().setAxisMaxValue(5f);
+//			mchart.getYAxis().setLabelCount(6, true);
+			
         // Fermeture de l'acc�s a la base de donnees
         //data.close();
     }
@@ -1261,6 +1261,7 @@ public class Main extends Activity {
     	List<List<List<String>>> riskListDetail = new ArrayList<List<List<String>>>();
     	List<List<String>> riskLevelDetail;
     	List<String> appNameDetail;
+    	StringBuilder sbAppList = new StringBuilder();
     	
     	for(int i=0;i<11;i++){
     		riskLevelDetail = new ArrayList<List<String>>();
@@ -1277,15 +1278,96 @@ public class Main extends Activity {
     		riskListDetail.add(riskLevelDetail);
     	}
     	
+    	//data prep for chart
+    	
+    	mchart.setDescription("");
+
+    	mchart.setWebLineWidth(1.5f);
+    	mchart.setWebLineWidthInner(0.75f);
+    	mchart.setWebAlpha(100);
+    	
+    	 // create a custom MarkerView (extend MarkerView) and specify the layout
+        // to use for it
+        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        
+        // set the marker to the chart
+        mchart.setMarkerView(mv);
+    	    	
+    	ArrayList<String> xVals = new ArrayList<String>();
+    	ArrayList<Entry> yVals1 = new ArrayList<Entry>();
+    	
+    	xVals.add("Account Risk");
+    	xVals.add("Browser Risk");
+    	xVals.add("Calendar Risk");
+    	xVals.add("Calling Risk");
+    	xVals.add("Contact Risk");
+    	xVals.add("Location Risk");
+    	xVals.add("Media Risk");
+    	xVals.add("Message Risk");
+    	xVals.add("Network Risk");
+    	xVals.add("Phone Risk");
+    	xVals.add("External Risk");
+    	
+    	List<List<String>> tempRiskLevelDetail = new ArrayList<List<String>>();
+    	List<String> tempAppNameDetail = new ArrayList<String>();
+    	
     	for(int i=0;i<11;i++){
+    		sbAppList.append(i+".");
     		for(int j=5;j>=0;j--){
     			if(!isAppNameEmpty(riskListDetail,i,j)){
     				//put your code here for graph
+    				sbAppList.append(j+".\n");
+    				yVals1.add(new Entry(j,i));
+    				tempRiskLevelDetail = new ArrayList<List<String>>();
+					tempRiskLevelDetail = riskListDetail.get(i);
+					tempAppNameDetail = new ArrayList<String>();
+					tempAppNameDetail = tempRiskLevelDetail.get(j);
+					for(String appName: tempAppNameDetail){
+						sbAppList.append(appName+", ");
+					}
+					sbAppList.append("\n");
     				break;
     			}
     		}
     	}
     	
+    	appList.setText(sbAppList);
+    	
+    	RadarDataSet set1 = new RadarDataSet(yVals1, "Set 1");
+        set1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        set1.setDrawFilled(true);
+        set1.setLineWidth(2f);
+        
+        RadarData data = new RadarData(xVals, set1);
+        data.setValueTypeface(tf);
+        data.setValueTextSize(8f);
+        data.setDrawValues(false);
+        
+        mchart.setData(data);
+        mchart.invalidate();
+        
+        
+        XAxis xAxis = mchart.getXAxis();
+        xAxis.setTypeface(tf);
+        xAxis.setTextSize(9f);
+
+        YAxis yAxis = mchart.getYAxis();
+        yAxis.setAxisMaxValue(5f);
+        yAxis.setTypeface(tf);
+        yAxis.setTextSize(9f);
+        yAxis.setStartAtZero(true);
+        yAxis.setLabelCount(6, true);
+      
+        mchart.notifyDataSetChanged();
+		mchart.invalidate();
+        
+        Legend l = mchart.getLegend();
+        l.setPosition(LegendPosition.RIGHT_OF_CHART);
+        l.setTypeface(tf);
+        l.setXEntrySpace(7f);
+     
+        l.setYEntrySpace(5f);
+
     }
 
 	protected Boolean isAppNameEmpty(List<List<List<String>>> riskListDetail,int appRiskCategory, int riskLevel) {

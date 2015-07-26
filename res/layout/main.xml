@@ -43,6 +43,13 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
     </FrameLayout>-->
+    <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout 
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
     <TextView
 		android:id="@+id/id_root_status"
         android:layout_width="wrap_content"
@@ -104,4 +111,16 @@
         android:text="Test" 
         android:maxLines = "20"
 		android:scrollbars = "vertical"/>
+	 <com.github.mikephil.charting.charts.RadarChart
+        android:id="@+id/id_chart"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_below="@+id/id_hello_world" />
+	 <TextView
+		android:id="@+id/id_app_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lalal"/>
+	 </LinearLayout>
+	 </ScrollView>
 </LinearLayout>
