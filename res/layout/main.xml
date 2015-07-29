@@ -50,6 +50,104 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
+     <TextView
+		android:id="@+id/id_verify_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apakah Anda mengaktifkan fitur 'verify apps'?"/>
+     <RadioGroup
+        android:id="@+id/id_verify_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/id_verify_true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ya" 
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/id_verify_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tidak" /> 
+    </RadioGroup>   
+    
+    <TextView
+		android:id="@+id/id_bootloader_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apakah status bootloader pada smartphone Anda?"/>
+     <RadioGroup
+        android:id="@+id/id_bootloader_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/id_bootloader_true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Locked" 
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/id_bootloader_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlocked" /> 
+    </RadioGroup> 
+    
+    <TextView
+		android:id="@+id/id_sdencrypt_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apakah Anda mengaktifkan 'sd card encryption'?"/>
+     <RadioGroup
+        android:id="@+id/id_sdencrypt_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/id_sdencrypt_true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ya" />
+        <RadioButton
+            android:id="@+id/id_sdencrypt_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tidak"
+            android:checked="true" /> 
+    </RadioGroup>
+     
+    <TextView
+		android:id="@+id/id_simpin_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apakah SIM Card Anda dilindungi oleh PIN?"/>
+     <RadioGroup
+        android:id="@+id/id_simpin_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <RadioButton
+            android:id="@+id/id_simpin_true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ya" />
+        <RadioButton
+            android:id="@+id/id_simpint_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tidak"
+            android:checked="true" /> 
+    </RadioGroup>
+    
+    <Button
+        android:id="@+id/id_assess_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Assess Risk"/>
+     
     <TextView
 		android:id="@+id/id_root_status"
         android:layout_width="wrap_content"
@@ -102,25 +200,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_simlock_status"
-        android:text="@string/wifi_history"/>
+        android:text=""/>
 	<TextView
         android:id="@+id/id_hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:layout_below="@+id/id_wifi_history"
-        android:text="Test" 
-        android:maxLines = "20"
-		android:scrollbars = "vertical"/>
+        />
+	<TextView
+		android:id="@+id/id_seccon_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Security Configuration Level"/>
+	
+	<com.github.mikephil.charting.charts.RadarChart
+        android:id="@+id/id_seccon_chart"
+        android:layout_width="350dp"
+        android:layout_height="350dp" />
+	<TextView
+		android:id="@+id/id_apprisk_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensitive Data Risk"/>
 	 <com.github.mikephil.charting.charts.RadarChart
         android:id="@+id/id_chart"
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:layout_below="@+id/id_hello_world" />
+        android:layout_below="@+id/id_apprisk_title" />
 	 <TextView
 		android:id="@+id/id_app_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="lalal"/>
+        android:text=""/>
 	 </LinearLayout>
 	 </ScrollView>
 </LinearLayout>

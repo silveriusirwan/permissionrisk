@@ -47,8 +47,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +66,11 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
+
+
+
+
 //import com.example.securityscanner.R;
 //import com.example.securityscanner.MainActivity.LockType;
 import java.util.HashMap;
@@ -88,8 +97,16 @@ public class Main extends Activity {
 	static TextView simlockStatus;
 	static TextView wifiHistory;
 	static TextView readResult;
+	static RadarChart schart;
 	static RadarChart mchart;
 	static TextView appList;
+	static RadioGroup verifyradio;
+	static RadioGroup bootloaderradio;
+	static RadioGroup sdencryptradio;
+	static RadioGroup simpinradio;
+	static Button assessbutton;
+	static TextView helloworld;
+	
 	Typeface tf;
 	private List<String> data;
 	private List<String> dataApplication;
@@ -140,11 +157,30 @@ public class Main extends Activity {
 		locationStatus = (TextView)findViewById(R.id.id_location_status);
 		simlockStatus = (TextView)findViewById(R.id.id_simlock_status);
 		wifiHistory = (TextView) findViewById(R.id.id_wifi_history);
+		schart = (RadarChart) findViewById(R.id.id_seccon_chart);
+		mchart = (RadarChart) findViewById(R.id.id_chart);
 		appList = (TextView) findViewById(R.id.id_app_list);
+		helloworld = (TextView) findViewById(R.id.id_hello_world);
+		verifyradio = (RadioGroup) findViewById(R.id.id_verify_radio);
+		bootloaderradio = (RadioGroup) findViewById(R.id.id_bootloader_radio);
+		sdencryptradio = (RadioGroup) findViewById(R.id.id_sdencrypt_radio);
+		simpinradio = (RadioGroup) findViewById(R.id.id_simpin_radio);
+		assessbutton = (Button) findViewById(R.id.id_assess_button);
 		
+		//hide configuration status textview
+		rootStatus.setVisibility(View.GONE);
+		nfcStatus.setVisibility(View.GONE);
+		bluetoothStatus.setVisibility(View.GONE);
+		lockStatus.setVisibility(View.GONE);
+		unknownStatus.setVisibility(View.GONE);
+		encryptedStatus.setVisibility(View.GONE);
+		locationStatus.setVisibility(View.GONE);
+		simlockStatus.setVisibility(View.GONE);
+//		wifiHistory.setVisibility(View.GONE);
+			
 		data = new ArrayList<String>();
 		
-		mchart = (RadarChart) findViewById(R.id.id_chart);
+		
 		tf = Typeface.createFromAsset(getAssets(), "TIMES.TTF");
 		NfcAdapter nfcAdpt = NfcAdapter.getDefaultAdapter(this.getApplicationContext());	
 		if(nfcAdpt!=null)
@@ -160,12 +196,12 @@ public class Main extends Activity {
 			}
 		} else nfcStatus.setText("NFC status = no NFC adapter");
 		
-		boolean rootstatus2 = isRooted();
-		rootStatus.setText("Root status= "+String.valueOf(rootstatus2));
-		
-		//add new line
-		data.add("Root Status");
-		data.add(String.valueOf(rootstatus2));
+//		boolean rootstatus2 = isRooted();
+//		rootStatus.setText("Root status= "+String.valueOf(rootstatus2));
+//		
+//		//add new line
+//		data.add("Root Status");
+//		data.add(String.valueOf(rootstatus2));
 		
 		// Check for available NFC Adapter
         /*PackageManager pm = getPackageManager();
@@ -191,53 +227,53 @@ public class Main extends Activity {
 		    }
 		}
 		
-		int lockType = LockType.getCurrent(getContentResolver());
-		String lockType2;
-		switch(lockType) {
-	    case 1:
-	        lockType2 = "NONE or SLIDE";
-	        break;
-	    case 3:
-	    	lockType2 = "FACE WITH PATTERN";
-	        break;
-	    case 4:
-	    	lockType2 = "FACE WITH PIN";
-	        break;
-	    case 10:
-	    	lockType2 = "PATTERN";
-	        break;    
-	    case 11:
-	    	lockType2 = "PIN";
-	        break;
-	    case 12:
-	    	lockType2 = "PASSWORD ALPHABETIC";
-	        break;
-	    case 13:
-	    	lockType2 = "PASSWORD ALPHANUMERIC";
-	        break;
-	    default:
-	    	lockType2 = "ERROR";
-		}
+//		int lockType = LockType.getCurrent(getContentResolver());
+//		String lockType2;
+//		switch(lockType) {
+//	    case 1:
+//	        lockType2 = "NONE or SLIDE";
+//	        break;
+//	    case 3:
+//	    	lockType2 = "FACE WITH PATTERN";
+//	        break;
+//	    case 4:
+//	    	lockType2 = "FACE WITH PIN";
+//	        break;
+//	    case 10:
+//	    	lockType2 = "PATTERN";
+//	        break;    
+//	    case 11:
+//	    	lockType2 = "PIN";
+//	        break;
+//	    case 12:
+//	    	lockType2 = "PASSWORD ALPHABETIC";
+//	        break;
+//	    case 13:
+//	    	lockType2 = "PASSWORD ALPHANUMERIC";
+//	        break;
+//	    default:
+//	    	lockType2 = "ERROR";
+//		}
+//		
+//		
+//		lockStatus.setText("Lock status= "+String.valueOf(lockType2));
+//		data.add("Lock screen status");
+//		data.add(String.valueOf(lockType2));
 		
+//		boolean isNonPlayAppAllowed = isTrustUnknownSource();
+//		unknownStatus.setText("Unknown sources status= "+String.valueOf(isNonPlayAppAllowed));
+//		data.add("Unknown sources status");
+//		data.add(String.valueOf(isNonPlayAppAllowed));
 		
-		lockStatus.setText("Lock status= "+String.valueOf(lockType2));
-		data.add("Lock screen status");
-		data.add(String.valueOf(lockType2));
+//		boolean encryptedStatus2 = isEncrypted(this.getApplicationContext());
+//		encryptedStatus.setText("Encrypted status= "+String.valueOf(encryptedStatus2));
+//		data.add("Phone Encryption status");
+//		data.add(String.valueOf(encryptedStatus2));
 		
-		boolean isNonPlayAppAllowed = isTrustUnknownSource();
-		unknownStatus.setText("Unknown sources status= "+String.valueOf(isNonPlayAppAllowed));
-		data.add("Unknown sources status");
-		data.add(String.valueOf(isNonPlayAppAllowed));
-		
-		boolean encryptedStatus2 = isEncrypted(this.getApplicationContext());
-		encryptedStatus.setText("Encrypted status= "+String.valueOf(encryptedStatus2));
-		data.add("Phone Encryption status");
-		data.add(String.valueOf(encryptedStatus2));
-		
-		boolean locationStatus2 = isGpsEnabled();
-		locationStatus.setText("Location status= "+String.valueOf(locationStatus2));
-		data.add("Location status");
-		data.add(String.valueOf(locationStatus2));
+//		boolean locationStatus2 = isGpsEnabled();
+//		locationStatus.setText("Location status= "+String.valueOf(locationStatus2));
+//		data.add("Location status");
+//		data.add(String.valueOf(locationStatus2));
 		
 		boolean simLockStatus2 = isSimPinRequired(getApplicationContext());
 		simlockStatus.setText("Sim lock status= "+String.valueOf(simLockStatus2));
@@ -257,21 +293,33 @@ public class Main extends Activity {
 			
 		}*/
 	
-		
+/*		
 		StringBuilder strWifiStatus = new StringBuilder(); 
 		dataWifi = new ArrayList<String>();
 		WifiManager wifiManager=(WifiManager)getSystemService(Context.WIFI_SERVICE); 
 		List<WifiConfiguration> networks=wifiManager.getConfiguredNetworks(); 
-		strWifiStatus.append("Wifi Status:\n"); 
+		int openwifi=0;
+		int sumwifi=0;
+		float percentwifi;
+		//strWifiStatus.append("Wifi History:\n"); 
 		for (WifiConfiguration config : networks) 
 		{
 			//Log.i("Wifi",config.SSID + " " +getSecurity(config)); 
-			strWifiStatus.append(config.SSID+" ("+getSecurity(config)+")\n");
-			dataWifi.add(config.SSID);
-			dataWifi.add(getSecurity(config));
-		} 
+//			strWifiStatus.append(config.SSID+" ("+getSecurity(config)+")\n");
+			if (getSecurity(config)=="NONE"){
+				openwifi=openwifi+1;
+			}
+			sumwifi=sumwifi+1;
+//			dataWifi.add(config.SSID);
+//			dataWifi.add(getSecurity(config));
+		}
+//		strWifiStatus.append("Jumlah Open Wifi = "+openwifi);
+//		strWifiStatus.append("Jumlah Wifi = "+sumwifi);
+		percentwifi = ((float) openwifi/sumwifi)*100;
+		strWifiStatus.append("Persentase Open Wifi = "+ percentwifi + " ("+ openwifi + "/" + sumwifi +")");
+
 		wifiHistory.setText(strWifiStatus);
-		
+*/		
 		dataApplication = new ArrayList<String>(); 
 		final PackageManager pm = getPackageManager(); 
 		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA); 
@@ -286,7 +334,7 @@ public class Main extends Activity {
 				e.printStackTrace();
 			}
 			String appName = (String) (lApplicationInfo != null ? pm.getApplicationLabel(lApplicationInfo) : "Unknown"); 			
-			Log.i("PackageMarket", marketName); 
+			//Log.i("PackageMarket", marketName); 
 			dataApplication.add(marketName); 
 			dataApplication.add(appName);
 		}
@@ -357,6 +405,288 @@ public class Main extends Activity {
         // V�rification de la base de donn�es
         Tools.database.isUpToDate();
         
+        assessbutton.setOnClickListener( new OnClickListener() {
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+            	StringBuilder textHasil = new StringBuilder();
+            	int verifyid = verifyradio.getCheckedRadioButtonId();
+            	int bootloaderid = bootloaderradio.getCheckedRadioButtonId();
+            	int sdencryptid = sdencryptradio.getCheckedRadioButtonId();
+            	int simpinid = simpinradio.getCheckedRadioButtonId();
+            	int lockType = LockType.getCurrent(getContentResolver());
+            	float conlevel = 0;
+            	
+            	boolean locstat = isGpsEnabled();
+            	boolean verstat;
+            	boolean unkstat = isTrustUnknownSource();
+            	boolean rootstat = isRooted();
+            	boolean bootstat;
+            	boolean scrstat;
+            	boolean phenstat=isEncrypted(getApplicationContext());
+            	boolean sdenstat;
+            	boolean simstat;
+            	
+            	
+            	StringBuilder strWifiStatus = new StringBuilder(); 
+        		dataWifi = new ArrayList<String>();
+        		WifiManager wifiManager=(WifiManager)getSystemService(Context.WIFI_SERVICE); 
+        		List<WifiConfiguration> networks=wifiManager.getConfiguredNetworks(); 
+        		int openwifi=0;
+        		int sumwifi=0;
+        		float percentwifi;
+
+        		for (WifiConfiguration config : networks) 
+        		{
+        			if (getSecurity(config)=="NONE"){
+        				openwifi=openwifi+1;
+        			}
+        			sumwifi=sumwifi+1;
+        		}
+        		percentwifi = ((float) openwifi/sumwifi)*100;
+        		
+        		
+            	String lockDetail ="";
+            	switch(lockType) {
+        	    case 1:
+        	    	lockDetail = "NONE or SLIDE";
+        	        break;
+        	    case 3:
+        	    	lockDetail = "FACE WITH PATTERN";
+        	        break;
+        	    case 4:
+        	    	lockDetail = "FACE WITH PIN";
+        	        break;
+        	    case 10:
+        	    	lockDetail = "PATTERN";
+        	        break;    
+        	    case 11:
+        	    	lockDetail = "PIN";
+        	        break;
+        	    case 12:
+        	    	lockDetail = "PASSWORD ALPHABETIC";
+        	        break;
+        	    case 13:
+        	    	lockDetail = "PASSWORD ALPHANUMERIC";
+        	        break;
+        	    default:
+        	    	lockDetail = "ERROR";
+        		}
+            	
+            	if (lockType!=1){
+            		scrstat = true;
+            	}else scrstat = false;
+            	if (verifyid == R.id.id_verify_true){
+        	    	
+        	    	verstat = true;
+        	    } else {
+        	    	verstat = false;
+        	    }
+        	    
+        	    if (bootloaderid == R.id.id_bootloader_true){
+        	    	bootstat=true;
+        	    } else {
+        	    	bootstat=false;
+        	    }
+        	    
+        	    if (sdencryptid == R.id.id_sdencrypt_true){
+        	    	sdenstat=true;	
+        	    } else {
+        	    	sdenstat=false;	
+        	    }
+        	     
+        	    if (simpinid == R.id.id_simpin_true){
+        	    	simstat=true;
+        	    } else {
+        	    	simstat=false;    	    	
+        	    }
+
+        	    schart.setDescription("");
+
+            	schart.setWebLineWidth(1.5f);
+            	schart.setWebLineWidthInner(0.75f);
+            	schart.setWebAlpha(100);
+            	
+            	ArrayList<String> xValue = new ArrayList<String>();
+            	ArrayList<Entry> yValue = new ArrayList<Entry>();
+            	
+            	xValue.add("Network");
+            	xValue.add("Application");
+            	xValue.add("Operating System");
+            	xValue.add("Device");
+            	
+            	for(int i=0;i<4;i++){
+            		if(i==0){
+            			if (locstat==false){
+            				if(percentwifi==0){
+            					conlevel=5;
+            				}else if(percentwifi>0 && percentwifi<=10 ){
+            					conlevel=4;
+            				}else if(percentwifi>10 && percentwifi<=30 ){
+            					conlevel=3;
+            				}else if(percentwifi>30){
+            					conlevel=2;
+            				}
+            			}else if(locstat==true){
+            				if(percentwifi==0){
+            					conlevel=4;
+            				}else if(percentwifi>0 && percentwifi<=10 ){
+            					conlevel=3;
+            				}else if(percentwifi>10 && percentwifi<=30 ){
+            					conlevel=2;
+            				}else if(percentwifi>30){
+            					conlevel=1;
+            				}
+            			}
+            			yValue.add(new Entry(conlevel,i));
+            			if (Float.isNaN(percentwifi)){
+                			textHasil.append("Open Wi-Fi Usage = (unable to get wifi history)");
+                		}else{
+                			textHasil.append("Open Wi-Fi Usage = "+ percentwifi + "% ("+ openwifi + "/" + sumwifi +")");
+                		}
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append("Location status = "+ locstat);
+                		textHasil.append(System.getProperty("line.separator"));
+                		textHasil.append(System.getProperty("line.separator"));
+            		}
+            		if (i==1){
+            			if (verstat==true){
+                	    	if (unkstat==false) {
+                	    		conlevel = 5;
+                	    	}else if (unkstat == true){
+                	    		conlevel = 2;
+                	    	}
+                	    }else if (verstat==false){
+                	    	if (unkstat == true){
+                	    		conlevel = 1;
+                	    	}else if (unkstat == false){
+                	    		conlevel = 3;
+                	    	}
+                	    }
+            			yValue.add(new Entry(conlevel,i));
+            			
+            			textHasil.append("Verify apps status = "+ String.valueOf(verstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                    	
+                	    textHasil.append("Unknown sources status= "+String.valueOf(unkstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    textHasil.append(System.getProperty("line.separator"));
+            		}
+            		conlevel=0;
+            		if(i==2){
+            			if (rootstat==true){
+                	    	if (bootstat==true) {
+                	    		conlevel = 2;
+                	    	}else {
+                	    		conlevel = 1;
+                	    	}
+                	    }else if (rootstat==false){
+                	    	conlevel = 5;
+                	    }
+            			yValue.add(new Entry(conlevel,i));
+            			
+            			textHasil.append("Root status= "+String.valueOf(rootstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    
+                	    textHasil.append("Bootloader status = "+ String.valueOf(bootstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    textHasil.append(System.getProperty("line.separator"));
+            		}
+            		conlevel=0;
+            		if(i==3){
+            			if(scrstat==true){
+            				if (phenstat==true){
+            					if(sdenstat==true){
+            						if(simstat==true){
+            							conlevel=5;
+            						}else if(simstat==false){
+            							conlevel=4;
+            						}         						
+            					}else if(sdenstat==false){
+            						if(simstat==true){
+            							conlevel=4;
+            						}else if(simstat==false){
+            							conlevel=3;
+            						}
+            					}
+            				}else if(phenstat==false){
+            					if(sdenstat==true){
+            							conlevel=0;         	         						
+            					}else if(sdenstat==false){
+            						if(simstat==true){
+            							conlevel=3;
+            						}else if(simstat==false){
+            							conlevel=2;
+            						}
+            					}
+            				}
+            			}else if(scrstat==false){
+            				if (phenstat==true){
+            					conlevel=0;
+            				}else if(phenstat==false){
+            					if(sdenstat==true){
+            							conlevel=0;         	         						
+            					}else if(sdenstat==false){
+            						if(simstat==true){
+            							conlevel=2;
+            						}else if(simstat==false){
+            							conlevel=1;
+            						}
+            					}
+            				}
+            			}	
+            			yValue.add(new Entry(conlevel,i));
+            			
+            			textHasil.append("Screen lock status = "+ lockDetail);
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    
+                	    textHasil.append("Phone Encryption status = "+ String.valueOf(phenstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    
+                	    textHasil.append("SD card encryption status = "+String.valueOf(sdenstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    
+                	    textHasil.append("SIM card PIN status = "+String.valueOf(simstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+                	    textHasil.append(System.getProperty("line.separator"));
+            		}
+            	}
+            	
+            	RadarDataSet set1 = new RadarDataSet(yValue, "Set 1");
+                set1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+                set1.setDrawFilled(true);
+                set1.setLineWidth(2f);
+                
+                RadarData data = new RadarData(xValue, set1);
+                data.setValueTypeface(tf);
+                data.setValueTextSize(8f);
+                data.setDrawValues(false);
+                
+                schart.setData(data);
+                schart.invalidate();
+                
+                XAxis xAxis = schart.getXAxis();
+                xAxis.setTypeface(tf);
+                xAxis.setTextSize(9f);
+
+                YAxis yAxis = schart.getYAxis();
+                yAxis.setAxisMaxValue(5f);
+                yAxis.setTypeface(tf);
+                yAxis.setTextSize(9f);
+                yAxis.setStartAtZero(true);
+                yAxis.setLabelCount(6, true);
+              
+                schart.notifyDataSetChanged();
+        		schart.invalidate();
+                
+                Legend l = schart.getLegend();
+                l.setPosition(LegendPosition.RIGHT_OF_CHART);
+                l.setTypeface(tf);
+                l.setXEntrySpace(7f);
+                l.setYEntrySpace(5f);
+            
+                helloworld.setText(textHasil);
+            }
+        });
         
         readResult = (TextView)findViewById(R.id.id_hello_world);
         /*
@@ -393,8 +723,14 @@ public class Main extends Activity {
         }           
             readResult.setText(textHasil);
             readResult.setMovementMethod(new ScrollingMovementMethod());
-        */   
+        */  
+        exportCSV();
+        
+        
+       
     }
+    
+
     
     //BN add method from security scanner
     public String getMarket(String packageName){ 
@@ -787,8 +1123,8 @@ public class Main extends Activity {
     			return true;
     		case R.id.menu_exportcsv:
     			exportCSV(); //BN added to start exporting CSV
-    			writeWifiCSV(dataWifi);
-    			writeMarketCSV(dataApplication);
+    			//writeWifiCSV(dataWifi);
+    			//writeMarketCSV(dataApplication);
     			return true;
     		default:
     			return super.onOptionsItemSelected(item);
@@ -1015,7 +1351,7 @@ public class Main extends Activity {
 	        	permissionListCursor.moveToNext();
 			}
 			//permissionListCursor.moveToFirst();
-			Log.i(TAG,"move to first");
+			//Log.i(TAG,"move to first");
 			/*while(!permissionListCursor.isAfterLast()) {
 				 String thePermission = "\"" + permissionListCursor.getString(permissionListCursor.getColumnIndex("appName")) + "\",\"" + permissionListCursor.getString(permissionListCursor.getColumnIndex("name")) + "\"";
 			     mArrayList.add(thePermission); //add the item
@@ -1296,36 +1632,79 @@ public class Main extends Activity {
     	ArrayList<String> xVals = new ArrayList<String>();
     	ArrayList<Entry> yVals1 = new ArrayList<Entry>();
     	
-    	xVals.add("Account Risk");
-    	xVals.add("Browser Risk");
-    	xVals.add("Calendar Risk");
-    	xVals.add("Calling Risk");
-    	xVals.add("Contact Risk");
-    	xVals.add("Location Risk");
-    	xVals.add("Media Risk");
-    	xVals.add("Message Risk");
-    	xVals.add("Network Risk");
-    	xVals.add("Phone Risk");
-    	xVals.add("External Risk");
+    	xVals.add("Account Information");
+    	xVals.add("Browser History and Bookmarks");
+    	xVals.add("Calendar Information");
+    	xVals.add("Calling Information");
+    	xVals.add("Contact and Profile");
+    	xVals.add("Location");
+    	xVals.add("Media");
+    	xVals.add("Message");
+    	xVals.add("Network Information");
+    	xVals.add("Phone Information");
+    	xVals.add("External Storage Data");
     	
     	List<List<String>> tempRiskLevelDetail = new ArrayList<List<String>>();
     	List<String> tempAppNameDetail = new ArrayList<String>();
-    	
+    	String sencat;
     	for(int i=0;i<11;i++){
-    		sbAppList.append(i+".");
+    		switch(i) {
+		    case 0:
+		        sencat = "Account Information Risk";
+		        break;
+		    case 1:
+		    	sencat = "Browser History and Bookmarks Risk";
+		        break;
+		    case 2:
+		    	sencat = "Calendar Information Risk";
+		        break;
+		    case 3:
+		    	sencat = "Calling Information Risk";
+		        break;
+		    case 4:
+		    	sencat = "Contacts and Profile Risk";
+		        break;
+		    case 5:
+		    	sencat = "Location Risk";
+		        break;
+		    case 6:
+		    	sencat = "Media Risk";
+		        break;
+		    case 7:
+		    	sencat = "Messages Risk";
+		        break;
+		    case 8:
+		    	sencat = "Network Information Risk";
+		        break;
+		    case 9:
+		    	sencat = "Phone Information Risk";
+		        break;
+		    case 10:
+		    	sencat = "External Storage Data Risk";
+		        break;
+		    default:
+		        sencat = "category?";
+			}
+    		sbAppList.append(sencat+" = ");
     		for(int j=5;j>=0;j--){
     			if(!isAppNameEmpty(riskListDetail,i,j)){
     				//put your code here for graph
+    					
     				sbAppList.append(j+".\n");
     				yVals1.add(new Entry(j,i));
     				tempRiskLevelDetail = new ArrayList<List<String>>();
 					tempRiskLevelDetail = riskListDetail.get(i);
 					tempAppNameDetail = new ArrayList<String>();
 					tempAppNameDetail = tempRiskLevelDetail.get(j);
-					for(String appName: tempAppNameDetail){
-						sbAppList.append(appName+", ");
+					
+					if(j!=0){
+						for(String appName: tempAppNameDetail){
+							sbAppList.append(appName+", ");
+						}
+					}else{
+						sbAppList.append("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
 					}
-					sbAppList.append("\n");
+					sbAppList.append("\n\n");
     				break;
     			}
     		}
@@ -1365,7 +1744,6 @@ public class Main extends Activity {
         l.setPosition(LegendPosition.RIGHT_OF_CHART);
         l.setTypeface(tf);
         l.setXEntrySpace(7f);
-     
         l.setYEntrySpace(5f);
 
     }
@@ -1402,14 +1780,14 @@ public class Main extends Activity {
 		File file   = null;
 		File root   = Environment.getExternalStorageDirectory();
 		Log.i("datax", "writeCSV");
-		Toast.makeText(getApplicationContext(), "CSV Created bla"+root.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "CSV Created bla"+root.getAbsolutePath(), Toast.LENGTH_SHORT).show();
 		if (root.canWrite()){
 		    File dir    =   new File (root.getAbsolutePath());
 		    Log.i("datax", root.getAbsolutePath().toString());
 		     dir.mkdirs();
 		     file   =   new File(dir, "permission.csv");
 		     FileOutputStream out   =   null;
-		     Toast.makeText(getApplicationContext(), "CSV Created"+root.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+		     //Toast.makeText(getApplicationContext(), "CSV Created"+root.getAbsolutePath(), Toast.LENGTH_SHORT).show();
 		    try {
 		        out = new FileOutputStream(file);
 		        Log.i("datax", "FileOutputStream");

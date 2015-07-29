@@ -10,8 +10,9 @@
 	<string name="location_status">location_status</string>
 	<string name="simlock_status">simlock_status</string>
 	<string name="wifi_history">wifi_history</string>
+	<string name="apprisk_title">apprisk_title</string>
 	<!-- BN add - END -->
-    <string name="app_name">Permission Explorer</string>
+    <string name="app_name">Smartphone Risk Assessment</string>
     <string name="alert_database_nottodate_text">Database is not up to date, do you want to update it ?</string>
     <string name="alert_database_nottodate_yes">Yes</string>
     <string name="alert_database_nottodate_no">No</string>
