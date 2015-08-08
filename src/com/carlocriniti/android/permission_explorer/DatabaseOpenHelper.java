@@ -14,6 +14,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	// Paramètres de la base
@@ -34,6 +35,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         "CREATE TABLE permission (" +
         "id INTEGER PRIMARY KEY, " +
         "name TEXT);";
+    
+    private static final String IGNORE_TABLE_CREATE =
+            "CREATE TABLE ignore_list (" +
+            "categoryCode INTEGER, " +
+            "levelCode INTEGER, " +
+            "appName TEXT, " +
+            "isIgnore INTEGER);";
     
     private static final String CATEGORY_TABLE_CREATE = 
     	"CREATE TABLE category (" +
@@ -57,6 +65,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     // Suppression des tables
     private static final String APPLICATION_TABLE_DELETE = "DROP TABLE application;";
     private static final String PERMISSION_TABLE_DELETE = "DROP TABLE permission;";
+    private static final String IGNORE_TABLE_DELETE = "DROP TABLE ignore_list;";
     private static final String RELATION_APPLICATION_PERMISSION_TABLE_DELETE = "DROP TABLE relation_application_permission;";
     private static final String CATEGORY_TABLE_DELETE = "DROP TABLE category;";
     private static final String RELATION_CATEGORY_PERMISSION_DELETE = "DROP TABLE relation_category_permission";
@@ -380,6 +389,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private void createMinimalDb(SQLiteDatabase db) {
     	db.execSQL(APPLICATION_TABLE_CREATE);
     	db.execSQL(PERMISSION_TABLE_CREATE);
+    	db.execSQL(IGNORE_TABLE_CREATE);
     	db.execSQL(RELATION_APPLICATION_PERMISSION_TABLE_CREATE);
     	db.execSQL(CATEGORY_TABLE_CREATE);
     	db.execSQL(RELATION_CATEGORY_PERMISSION);
@@ -480,9 +490,25 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(CATEGORY_TABLE_DELETE);
 		db.execSQL(APPLICATION_TABLE_DELETE);
     	db.execSQL(PERMISSION_TABLE_DELETE);
+    	db.execSQL(IGNORE_TABLE_DELETE);
     	
     	// Créé une nouvelle base de données
     	createMinimalDb(db);
     	fillDb(db);
 	}
+	
+    // Books table name
+    private static final String TABLE_IGNORE_LIST = "ignore_list";
+
+    // Books Table Columns names
+    private static final String KEY_DATA_CATEGORY = "data_category";
+    private static final String KEY_APP_NAME = "app_name";
+    private static final String KEY_IGNORE = "ignore";
+
+    private static final String[] COLUMNS = {KEY_DATA_CATEGORY,KEY_APP_NAME,KEY_IGNORE};
+    
+
+    
+    
+	
 }

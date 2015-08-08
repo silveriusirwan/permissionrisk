@@ -4,8 +4,8 @@
       android:versionCode="9"
       android:versionName="3.1"
       android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="10"
-    		  android:targetSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="14"
+    		  android:targetSdkVersion="14" />
     
  	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.NFC" />
@@ -30,5 +30,6 @@
         <activity android:name=".ApplicationDetail" />
         <activity android:name=".PermissionDetail" />
         <activity android:name=".Preference" />
+        <activity android:name=".IgnoreList" />
     </application>
 </manifest>

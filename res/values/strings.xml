@@ -10,7 +10,9 @@
 	<string name="location_status">location_status</string>
 	<string name="simlock_status">simlock_status</string>
 	<string name="wifi_history">wifi_history</string>
-	<string name="apprisk_title">apprisk_title</string>
+	<string name="seccon_title"><br><br></br></br><b><u>Hasil Penilaian Security Configuration Level</u></b></string>
+	<string name="apprisk_title"><b><u>Hasil Penilaian Sensitive Data Risk Level</u></b></string>
+	<string name="ignore_title"><b><u>Application Ignore List</u></b></string>
 	<!-- BN add - END -->
     <string name="app_name">Smartphone Risk Assessment</string>
     <string name="alert_database_nottodate_text">Database is not up to date, do you want to update it ?</string>

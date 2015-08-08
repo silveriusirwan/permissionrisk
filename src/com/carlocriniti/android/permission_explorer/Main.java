@@ -19,9 +19,11 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,12 +32,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,16 +47,24 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.telephony.TelephonyManager;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +78,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
 
 
 
@@ -105,12 +116,17 @@ public class Main extends Activity {
 	static RadioGroup sdencryptradio;
 	static RadioGroup simpinradio;
 	static Button assessbutton;
-	static TextView helloworld;
+	static TextView configDetail;
+	static TextView sectitle;
+	static LinearLayout ll;
+	static ScrollView sv;
+	private ProgressDialog loading;  
 	
 	Typeface tf;
 	private List<String> data;
 	private List<String> dataApplication;
 	private List<String> dataWifi;
+	private HashMap<Integer,String> checkedIgnoreList;
 	
 	public static final int SECURITY_NONE = 0;
 	public static final int SECURITY_WEP = 1;
@@ -143,8 +159,9 @@ public class Main extends Activity {
     public void onCreate(Bundle savedInstanceState) {        
     	super.onCreate(savedInstanceState);
     	
+    	setContentView(R.layout.main);
     	// Chargement de l'interface graphique
-        setContentView(R.layout.main);
+      //  setContentView(R.layout.main);
         
         //BN add to merge with security scanner
         Log.i("datax", this.getApplicationContext().getPackageCodePath().toString());
@@ -157,15 +174,17 @@ public class Main extends Activity {
 		locationStatus = (TextView)findViewById(R.id.id_location_status);
 		simlockStatus = (TextView)findViewById(R.id.id_simlock_status);
 		wifiHistory = (TextView) findViewById(R.id.id_wifi_history);
-		schart = (RadarChart) findViewById(R.id.id_seccon_chart);
-		mchart = (RadarChart) findViewById(R.id.id_chart);
+		sectitle = (TextView) findViewById(R.id.id_seccon_title);
+		TextView apptitle = (TextView) findViewById(R.id.id_apprisk_title);
 		appList = (TextView) findViewById(R.id.id_app_list);
-		helloworld = (TextView) findViewById(R.id.id_hello_world);
+		configDetail = (TextView) findViewById(R.id.id_config_detail);
 		verifyradio = (RadioGroup) findViewById(R.id.id_verify_radio);
 		bootloaderradio = (RadioGroup) findViewById(R.id.id_bootloader_radio);
 		sdencryptradio = (RadioGroup) findViewById(R.id.id_sdencrypt_radio);
 		simpinradio = (RadioGroup) findViewById(R.id.id_simpin_radio);
 		assessbutton = (Button) findViewById(R.id.id_assess_button);
+		schart = (RadarChart) findViewById(R.id.id_seccon_chart);
+		mchart = (RadarChart) findViewById(R.id.id_chart);
 		
 		//hide configuration status textview
 		rootStatus.setVisibility(View.GONE);
@@ -177,24 +196,37 @@ public class Main extends Activity {
 		locationStatus.setVisibility(View.GONE);
 		simlockStatus.setVisibility(View.GONE);
 //		wifiHistory.setVisibility(View.GONE);
-			
-		data = new ArrayList<String>();
+		sectitle.setVisibility(View.GONE);
+		schart.setVisibility(View.GONE);
 		
+		ll = (LinearLayout) findViewById(R.id.id_main_layout);
+		
+
+		
+		data = new ArrayList<String>();
+		checkedIgnoreList = new HashMap<Integer, String>();
+		
+		//turn on wifi			
+		WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE); 		
+		boolean wifiEnabled = wifiManager.isWifiEnabled();
+		if (wifiEnabled==false){
+			wifiManager.setWifiEnabled(true);
+		}
 		
 		tf = Typeface.createFromAsset(getAssets(), "TIMES.TTF");
-		NfcAdapter nfcAdpt = NfcAdapter.getDefaultAdapter(this.getApplicationContext());	
-		if(nfcAdpt!=null)
-		{
-			
-		if(nfcAdpt.isEnabled())
-			{
-				nfcStatus.setText("NFC status = true");
-			}
-			else
-			{
-				nfcStatus.setText("NFC status = false");
-			}
-		} else nfcStatus.setText("NFC status = no NFC adapter");
+//		NfcAdapter nfcAdpt = NfcAdapter.getDefaultAdapter(this.getApplicationContext());	
+//		if(nfcAdpt!=null)
+//		{
+//			
+//		if(nfcAdpt.isEnabled())
+//			{
+//				nfcStatus.setText("NFC status = true");
+//			}
+//			else
+//			{
+//				nfcStatus.setText("NFC status = false");
+//			}
+//		} else nfcStatus.setText("NFC status = no NFC adapter");
 		
 //		boolean rootstatus2 = isRooted();
 //		rootStatus.setText("Root status= "+String.valueOf(rootstatus2));
@@ -211,21 +243,21 @@ public class Main extends Activity {
         	nfcStatus.setText("NFC status = false");
         }*/
 		
-		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		//add new line
-		data.add("Bluetooth Status");
-		
-		if (mBluetoothAdapter == null) {
-			bluetoothStatus.setText("Bluetooth status = null");
-		} else {
-		    if (!mBluetoothAdapter.isEnabled()) {
-		    	bluetoothStatus.setText("Bluetooth status = false");
-		    	data.add("false");
-		    }else{
-		    	bluetoothStatus.setText("Bluetooth status = true");
-		    	data.add("true");
-		    }
-		}
+//		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//		//add new line
+//		data.add("Bluetooth Status");
+//		
+//		if (mBluetoothAdapter == null) {
+//			bluetoothStatus.setText("Bluetooth status = null");
+//		} else {
+//		    if (!mBluetoothAdapter.isEnabled()) {
+//		    	bluetoothStatus.setText("Bluetooth status = false");
+//		    	data.add("false");
+//		    }else{
+//		    	bluetoothStatus.setText("Bluetooth status = true");
+//		    	data.add("true");
+//		    }
+//		}
 		
 //		int lockType = LockType.getCurrent(getContentResolver());
 //		String lockType2;
@@ -275,10 +307,10 @@ public class Main extends Activity {
 //		data.add("Location status");
 //		data.add(String.valueOf(locationStatus2));
 		
-		boolean simLockStatus2 = isSimPinRequired(getApplicationContext());
-		simlockStatus.setText("Sim lock status= "+String.valueOf(simLockStatus2));
-		data.add("Sim lock status");
-		data.add(String.valueOf(simLockStatus2));
+//		boolean simLockStatus2 = isSimPinRequired(getApplicationContext());
+//		simlockStatus.setText("Sim lock status= "+String.valueOf(simLockStatus2));
+//		data.add("Sim lock status");
+//		data.add(String.valueOf(simLockStatus2));
 		
 		/*WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		List<WifiConfiguration> arraylist = wifiManager.getConfiguredNetworks();
@@ -426,7 +458,6 @@ public class Main extends Activity {
             	boolean sdenstat;
             	boolean simstat;
             	
-            	
             	StringBuilder strWifiStatus = new StringBuilder(); 
         		dataWifi = new ArrayList<String>();
         		WifiManager wifiManager=(WifiManager)getSystemService(Context.WIFI_SERVICE); 
@@ -538,13 +569,18 @@ public class Main extends Activity {
             				}
             			}
             			yValue.add(new Entry(conlevel,i));
+            			
             			if (Float.isNaN(percentwifi)){
-                			textHasil.append("Open Wi-Fi Usage = (unable to get wifi history)");
+            				textHasil.append("Network configuration level = -");
+            				textHasil.append(System.getProperty("line.separator"));
+                			textHasil.append(" > Open Wi-Fi Usage = (unable to get wifi history)");
                 		}else{
-                			textHasil.append("Open Wi-Fi Usage = "+ percentwifi + "% ("+ openwifi + "/" + sumwifi +")");
+                			textHasil.append("Network configuration level = "+conlevel);
+                			textHasil.append(System.getProperty("line.separator"));
+                			textHasil.append(" > Open Wi-Fi Usage = "+ percentwifi + "% ("+ openwifi + "/" + sumwifi +")");
                 		}
             			textHasil.append(System.getProperty("line.separator"));
-            			textHasil.append("Location status = "+ locstat);
+            			textHasil.append(" > Location status = "+ locstat);
                 		textHasil.append(System.getProperty("line.separator"));
                 		textHasil.append(System.getProperty("line.separator"));
             		}
@@ -563,11 +599,13 @@ public class Main extends Activity {
                 	    	}
                 	    }
             			yValue.add(new Entry(conlevel,i));
+            			textHasil.append("Application configuration level = "+conlevel);
+            			textHasil.append(System.getProperty("line.separator"));
             			
-            			textHasil.append("Verify apps status = "+ String.valueOf(verstat));
+            			textHasil.append(" > Verify apps status = "+ String.valueOf(verstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                     	
-                	    textHasil.append("Unknown sources status= "+String.valueOf(unkstat));
+                	    textHasil.append(" > Unknown sources status= "+String.valueOf(unkstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    textHasil.append(System.getProperty("line.separator"));
             		}
@@ -583,11 +621,13 @@ public class Main extends Activity {
                 	    	conlevel = 5;
                 	    }
             			yValue.add(new Entry(conlevel,i));
+            			textHasil.append("Operating system configuration level = "+conlevel);
+            			textHasil.append(System.getProperty("line.separator"));
             			
-            			textHasil.append("Root status= "+String.valueOf(rootstat));
+            			textHasil.append(" > Root status= "+String.valueOf(rootstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    
-                	    textHasil.append("Bootloader status = "+ String.valueOf(bootstat));
+                	    textHasil.append(" > Bootloader status = "+ String.valueOf(bootstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    textHasil.append(System.getProperty("line.separator"));
             		}
@@ -635,23 +675,23 @@ public class Main extends Activity {
             				}
             			}	
             			yValue.add(new Entry(conlevel,i));
+            			textHasil.append("Device configuration level = "+conlevel);
+            			textHasil.append(System.getProperty("line.separator"));
             			
-            			textHasil.append("Screen lock status = "+ lockDetail);
+            			textHasil.append(" > Screen lock status = "+ lockDetail);
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    
-                	    textHasil.append("Phone Encryption status = "+ String.valueOf(phenstat));
+                	    textHasil.append(" > Phone Encryption status = "+ String.valueOf(phenstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    
-                	    textHasil.append("SD card encryption status = "+String.valueOf(sdenstat));
+                	    textHasil.append(" > SD card encryption status = "+String.valueOf(sdenstat));
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    
-                	    textHasil.append("SIM card PIN status = "+String.valueOf(simstat));
-                	    textHasil.append(System.getProperty("line.separator"));
-                	    textHasil.append(System.getProperty("line.separator"));
+                	    textHasil.append(" > SIM card PIN status = "+String.valueOf(simstat));
             		}
             	}
             	
-            	RadarDataSet set1 = new RadarDataSet(yValue, "Set 1");
+            	RadarDataSet set1 = new RadarDataSet(yValue, "Configuration Level");
                 set1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
                 set1.setDrawFilled(true);
                 set1.setLineWidth(2f);
@@ -684,11 +724,13 @@ public class Main extends Activity {
                 l.setXEntrySpace(7f);
                 l.setYEntrySpace(5f);
             
-                helloworld.setText(textHasil);
+                configDetail.setText(textHasil);
+                sectitle.setVisibility(View.VISIBLE);
+        		schart.setVisibility(View.VISIBLE);
             }
         });
         
-        readResult = (TextView)findViewById(R.id.id_hello_world);
+//        readResult = (TextView)findViewById(R.id.id_hello_world);
         /*
         String FILE_NAME = "permission.csv";
         String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -723,11 +765,11 @@ public class Main extends Activity {
         }           
             readResult.setText(textHasil);
             readResult.setMovementMethod(new ScrollingMovementMethod());
-        */  
+        */
+        
         exportCSV();
-        
-        
-       
+
+//        spinner.setVisibility(View.GONE);
     }
     
 
@@ -1122,7 +1164,13 @@ public class Main extends Activity {
     			startActivityForResult(intent, ACTIVITY_RESULT_PREFERENCE);
     			return true;
     		case R.id.menu_exportcsv:
-    			exportCSV(); //BN added to start exporting CSV
+    			//finish();
+    			loading = ProgressDialog.show(Main.this, "","Loading...", true);
+    			Intent intentIgnore = new Intent(Main.this, IgnoreList.class);
+                startActivity(intentIgnore);
+                finish();
+               // exportCSV();
+                //BN added to start exporting CSV
     			//writeWifiCSV(dataWifi);
     			//writeMarketCSV(dataApplication);
     			return true;
@@ -1336,6 +1384,7 @@ public class Main extends Activity {
 			    
 			    //<begin for calculation>
 			    key = permissionListCursor.getString(permissionListCursor.getColumnIndex("appName"));
+			    key = key.replace("'", "");
 			    
 			    if (!prevKey.equals(key)){
 			    	if(count > 0){
@@ -1360,6 +1409,7 @@ public class Main extends Activity {
 			countRisk(multimapPermission);
 			writeCSV(mArrayList);
 			permissionListCursor.close();
+			
 //			mchart.getYAxis().setAxisMaxValue(5f);
 //			mchart.getYAxis().setLabelCount(6, true);
 			
@@ -1368,8 +1418,8 @@ public class Main extends Activity {
     }
     
     public void countRisk(Map<String,List<String>> multiMapPermission){
-    	Map<String, List<Integer>> multimapRisk = new HashMap<String, List<Integer>>();
-    	List<Integer> risk;
+    	//Map<String, List<Integer>> multimapRisk = new HashMap<String, List<Integer>>();
+    	//List<Integer> risk;
     	
 //    	List<List<String>> riskCategory = new ArrayList<List<String>>();
 //    	List<String> categoryLevel = new ArrayList<String>();
@@ -1382,7 +1432,7 @@ public class Main extends Activity {
     	
     	
     	for(String appName: multiMapPermission.keySet()){
-    		risk = new ArrayList<Integer>();
+    		//risk = new ArrayList<Integer>();
             List<String> permissions = multiMapPermission.get(appName);
             int riskLevel = 0;
             
@@ -1401,7 +1451,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }  
-            risk.add(riskLevel);
+           // risk.add(riskLevel);
+            if(!isRiskDetailExist(0, riskLevel, appName)){
+            	addToIgnoreList(0,riskLevel,appName,0);
+            }
             riskLevel = 0;
 //            System.out.println("Account Risk = " + riskLevel + " for " + appName);
             
@@ -1417,7 +1470,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             } 
-            risk.add(riskLevel);
+            //risk.add(riskLevel);
+            if(!isRiskDetailExist(1, riskLevel, appName)){
+            	addToIgnoreList(1,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Calendar Risk
@@ -1432,7 +1488,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             } 
-            risk.add(riskLevel);
+            //risk.add(riskLevel);
+            if(!isRiskDetailExist(2, riskLevel, appName)){
+            	addToIgnoreList(2,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Calling Risk
@@ -1447,7 +1506,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             } 
-            risk.add(riskLevel);
+          //  risk.add(riskLevel);
+            if(!isRiskDetailExist(3, riskLevel, appName)){
+            	addToIgnoreList(3,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Contact Risk
@@ -1465,7 +1527,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }  
-            risk.add(riskLevel);
+          //  risk.add(riskLevel);
+            if(!isRiskDetailExist(4, riskLevel, appName)){
+            	addToIgnoreList(4,riskLevel,appName,0);
+            }
             riskLevel = 0;
 //            System.out.println("Contact Risk= " + riskLevel + " for " + appName);
             
@@ -1484,7 +1549,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }
-            risk.add(riskLevel);
+            //risk.add(riskLevel);
+            if(!isRiskDetailExist(5, riskLevel, appName)){
+            	addToIgnoreList(5,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Media Risk
@@ -1502,7 +1570,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }
-            risk.add(riskLevel);
+          //  risk.add(riskLevel);
+            if(!isRiskDetailExist(6, riskLevel, appName)){
+            	addToIgnoreList(6,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Message Risk
@@ -1532,7 +1603,10 @@ public class Main extends Activity {
             	}
             }
     
-            risk.add(riskLevel);
+          //  risk.add(riskLevel);
+            if(!isRiskDetailExist(7, riskLevel, appName)){
+            	addToIgnoreList(7,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Network Risk
@@ -1550,7 +1624,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }
-            risk.add(riskLevel);
+           // risk.add(riskLevel);
+            if(!isRiskDetailExist(8, riskLevel, appName)){
+            	addToIgnoreList(8,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //Phone Risk
@@ -1565,7 +1642,10 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             } 
-            risk.add(riskLevel);
+           // risk.add(riskLevel);
+            if(!isRiskDetailExist(9, riskLevel, appName)){
+            	addToIgnoreList(9,riskLevel,appName,0);
+            }
             riskLevel = 0;
             
             //External Risk
@@ -1583,36 +1663,77 @@ public class Main extends Activity {
             		riskLevel = 4;
             	}
             }
-            risk.add(riskLevel);
+         //   risk.add(riskLevel);
+            if(!isRiskDetailExist(10, riskLevel, appName)){
+            	addToIgnoreList(10,riskLevel,appName,0);
+            }
             
-            multimapRisk.put(appName, risk);
+          //  multimapRisk.put(appName, risk);
         }
     	
     	//get risk detail 0-5 for each category
-    	getRiskDetail(multimapRisk);
+    	//getRiskDetail(multimapRisk);
+    	getRiskDetail(0);
     	
     }
     
-    protected void getRiskDetail(Map<String, List<Integer>> multimapRisk){
-    	List<List<List<String>>> riskListDetail = new ArrayList<List<List<String>>>();
-    	List<List<String>> riskLevelDetail;
-    	List<String> appNameDetail;
-    	StringBuilder sbAppList = new StringBuilder();
-    	
-    	for(int i=0;i<11;i++){
-    		riskLevelDetail = new ArrayList<List<String>>();
-    		for(int j=0; j<6; j++){
-    			appNameDetail = new ArrayList<String>();
-    			for(String appName: multimapRisk.keySet()){
-    				List<Integer> riskList = multimapRisk.get(appName);
-	    			if(riskList.get(i)==j){
-						appNameDetail.add(appName);
-					}
-	    		}	
-    			riskLevelDetail.add(appNameDetail);
-			}
-    		riskListDetail.add(riskLevelDetail);
+    protected boolean isRiskDetailExist(int _categoryCode, int _levelCode, String _appName){
+    	String query = "SELECT * FROM ignore_list WHERE categoryCode= "+ _categoryCode + " AND levelCode= "+ _levelCode + " AND appName= '"+ _appName +"'";
+    	Cursor applicationCursor = Tools.database.database.rawQuery(query, null);
+    	startManagingCursor(applicationCursor);
+        boolean isExist = applicationCursor.getCount()>0;
+        applicationCursor.close();
+    	if(isExist){
+    		return true;
     	}
+//    	riskDetailCursor.moveToFirst();
+//    	while(!riskDetailCursor.isAfterLast()) {
+//    		
+//    		riskDetailCursor.moveToNext();
+//    	}
+    	return false;
+    }
+    
+    protected void addToIgnoreList(int _categoryCode, int _levelCode, String _appName, int _ignore){
+    	SQLiteDatabase db;
+
+        db = openOrCreateDatabase(
+            "application_permission.db"
+            , SQLiteDatabase.CREATE_IF_NECESSARY
+            , null
+            );
+        
+        ContentValues insertValues = new ContentValues();
+        insertValues.put("categoryCode", _categoryCode);
+        insertValues.put("levelCode", _levelCode);
+        insertValues.put("appName", _appName);
+        insertValues.put("isIgnore", _ignore);
+        db.insert("ignore_list", null, insertValues);
+        db.close();
+    }
+    
+    protected void getRiskDetail(int ignoredCode){
+//    	List<List<List<String>>> riskListDetail = new ArrayList<List<List<String>>>();
+//    	List<List<String>> riskLevelDetail;
+//    	List<String> appNameDetail;
+//    	StringBuilder sbAppList = new StringBuilder();
+    	
+    	
+    	
+//    	for(int i=0;i<11;i++){
+//    		riskLevelDetail = new ArrayList<List<String>>();
+//    		for(int j=0; j<6; j++){
+//    			appNameDetail = new ArrayList<String>();
+//    			for(String appName: multimapRisk.keySet()){
+//    				List<Integer> riskList = multimapRisk.get(appName);
+//	    			if(riskList.get(i)==j){
+//						appNameDetail.add(appName);
+//					}
+//	    		}	
+//    			riskLevelDetail.add(appNameDetail);
+//			}
+//    		riskListDetail.add(riskLevelDetail);
+//    	}
     	
     	//data prep for chart
     	
@@ -1632,88 +1753,323 @@ public class Main extends Activity {
     	ArrayList<String> xVals = new ArrayList<String>();
     	ArrayList<Entry> yVals1 = new ArrayList<Entry>();
     	
-    	xVals.add("Account Information");
-    	xVals.add("Browser History and Bookmarks");
-    	xVals.add("Calendar Information");
-    	xVals.add("Calling Information");
-    	xVals.add("Contact and Profile");
+    	xVals.add("Account Info");
+    	xVals.add("Browser History & Bookmarks");
+    	xVals.add("Calendar Info");
+    	xVals.add("Calling Info");
+    	xVals.add("Contact & Profile");
     	xVals.add("Location");
     	xVals.add("Media");
     	xVals.add("Message");
-    	xVals.add("Network Information");
-    	xVals.add("Phone Information");
+    	xVals.add("Network Info");
+    	xVals.add("Phone Info");
     	xVals.add("External Storage Data");
     	
-    	List<List<String>> tempRiskLevelDetail = new ArrayList<List<String>>();
-    	List<String> tempAppNameDetail = new ArrayList<String>();
-    	String sencat;
-    	for(int i=0;i<11;i++){
-    		switch(i) {
-		    case 0:
-		        sencat = "Account Information Risk";
-		        break;
-		    case 1:
-		    	sencat = "Browser History and Bookmarks Risk";
-		        break;
-		    case 2:
-		    	sencat = "Calendar Information Risk";
-		        break;
-		    case 3:
-		    	sencat = "Calling Information Risk";
-		        break;
-		    case 4:
-		    	sencat = "Contacts and Profile Risk";
-		        break;
-		    case 5:
-		    	sencat = "Location Risk";
-		        break;
-		    case 6:
-		    	sencat = "Media Risk";
-		        break;
-		    case 7:
-		    	sencat = "Messages Risk";
-		        break;
-		    case 8:
-		    	sencat = "Network Information Risk";
-		        break;
-		    case 9:
-		    	sencat = "Phone Information Risk";
-		        break;
-		    case 10:
-		    	sencat = "External Storage Data Risk";
-		        break;
-		    default:
-		        sencat = "category?";
-			}
-    		sbAppList.append(sencat+" = ");
-    		for(int j=5;j>=0;j--){
-    			if(!isAppNameEmpty(riskListDetail,i,j)){
-    				//put your code here for graph
-    					
-    				sbAppList.append(j+".\n");
-    				yVals1.add(new Entry(j,i));
-    				tempRiskLevelDetail = new ArrayList<List<String>>();
-					tempRiskLevelDetail = riskListDetail.get(i);
-					tempAppNameDetail = new ArrayList<String>();
-					tempAppNameDetail = tempRiskLevelDetail.get(j);
-					
-					if(j!=0){
-						for(String appName: tempAppNameDetail){
-							sbAppList.append(appName+", ");
-						}
-					}else{
-						sbAppList.append("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
+    	Map<Integer, Integer> categoryRiskLevel = new HashMap<Integer, Integer>();
+    	//get yVals1
+    	String query = "SELECT MAX(levelCode) as theLevelCode, categoryCode FROM ignore_list WHERE isIgnore = " + ignoredCode + " GROUP BY categoryCode";
+    	Cursor riskDetailCursor = Tools.database.database.rawQuery(query, null);
+    	startManagingCursor(riskDetailCursor);
+    	riskDetailCursor.moveToFirst();
+    	while(!riskDetailCursor.isAfterLast()) {
+    		int levelCode = riskDetailCursor.getInt(riskDetailCursor.getColumnIndex("theLevelCode"));
+    		int categoryCode = riskDetailCursor.getInt(riskDetailCursor.getColumnIndex("categoryCode"));
+    		categoryRiskLevel.put(categoryCode, levelCode);
+    		yVals1.add(new Entry(levelCode,categoryCode));
+    		riskDetailCursor.moveToNext();
+    	}
+    	int checkBoxId = 1000;
+    	for(int categoryCodeDetail: categoryRiskLevel.keySet()){
+    		int levelCodeDetail = categoryRiskLevel.get(categoryCodeDetail);
+    		String riskinfo="blank";
+    		String sencat;
+	    	switch(categoryCodeDetail) {
+			    case 0:
+			        sencat = "Account Information Risk";
+					if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat menyalahgunakan request authtokens dari Account Manager atau membocorkan daftar akun pada Account Service melalui sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat menyalahgunakan request authtokens dari Account Manager atau membocorkan daftar akun pada Account Service melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat menyalahgunakan request authtokens dari Account Manager atau membocorkan daftar akun pada Account Service melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat membaca daftar akun dan melakukan request authtokens :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut hanya dapat membaca daftar akun atau melakukan request authtokens :";
 					}
-					sbAppList.append("\n\n");
-    				break;
-    			}
-    		}
+			        break;
+			    case 1:
+			    	sencat = "Browser History and Bookmarks Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan daftar riwayat dan bookmark dari browser pengguna melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan daftar riwayat dan bookmark dari browser pengguna melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan daftar riwayat dan bookmark dari browser pengguna melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut hanya dapat membaca daftar riwayat dan bookmark dari browser pengguna :";
+					}
+			        break;
+			    case 2:
+			    	sencat = "Calendar Information Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh data kalender melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan data kalender melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan data kalender melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut hanya dapat membaca data kalender pengguna :";
+					}
+			        break;
+			    case 3:
+			    	sencat = "Calling Information Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai panggilan masuk dan keluar melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai panggilan masuk dan keluar melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai panggilan masuk dan keluar melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut hanya dapat membaca seluruh informasi mengenai panggilan masuk dan keluar :";
+					}
+			        break;
+			    case 4:
+			    	sencat = "Contacts and Profile Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh daftar contact atau profile pengguna melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh daftar contact atau profile pengguna melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh daftar contact atau profile pengguna melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat membaca daftar contact dan profile pengguna:";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut hanya dapat membaca daftar contact atau profile pengguna :";
+					}
+			        break;
+			    case 5:
+			    	sencat = "Location Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh lokasi akurat atau lokasi kasar pengguna melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh lokasi akurat atau lokasi kasar pengguna melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh lokasi akurat atau lokasi kasar pengguna melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat mengakses data lokasi akurat dan lokasi kasar pengguna :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut dapat mengakses data lokasi akurat atau lokasi kasar pengguna :";
+					}
+			        break;
+			    case 6:
+			    	sencat = "Media Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh foto, video, atau rekaman suara pengguna melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh foto, video, atau rekaman suara pengguna melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh foto, video, atau rekaman suara pengguna melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat mengambil foto / video dan merekam suara pengguna :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut hanya dapat mengambil foto / video atau merekam suara pengguna :";
+					}
+			        break;
+			    case 7:
+			    	sencat = "Messages Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan lebih dari 1 jenis pesan (SMS, MMS, voice mail) pengguna melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan SMS, MMS, atau voice mail pengguna melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan SMS, MMS, atau voice mail pengguna melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat melakukan monitoring terhadap pesan SMS / MMS / voice mail yang masuk, merekam, atau memprosesnya :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut dapat membaca pesan SMS / vouce mail :";
+					}
+			        break;
+			    case 8:
+			    	sencat = "Network Information Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan informasi tentang jaringan atau Wi-Fi yang sedang digunakan melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan informasi tentang jaringan atau Wi-Fi yang sedang digunakan melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan informasi tentang jaringan atau Wi-Fi yang sedang digunakan melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat mengakses semua informasi tentang jaringan atau Wi-Fi yang sedang digunakan :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut hanya dapat mengakses informasi tentang jaringan atau Wi-Fi yang sedang digunakan :";
+					}
+			        break;
+			    case 9:
+			    	sencat = "Phone Information Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai status perangkat melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai status perangkat melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh informasi mengenai status perangkat melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut hanya dapat membaca seluruh informasi mengenai status perangkat :";
+					}
+			        break;
+			    case 10:
+			    	sencat = "External Storage Data Risk";
+			    	if (levelCodeDetail==5){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh berkas pada memori eksternal atau melakukan akses ke dokumen melalui semua sumber daya konektivitas jarak jauh maupun jarak dekat :";
+					}else if(levelCodeDetail==4){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh berkas pada memori eksternal atau melakukan akses ke dokumen  melalui sumber daya konektivitas jarak jauh :";
+					}else if(levelCodeDetail==3){
+						riskinfo="Aplikasi berikut dapat membocorkan seluruh berkas pada memori eksternal atau melakukan akses ke dokumen melalui sumber daya konektivitas jarak dekat :";
+					}else if(levelCodeDetail==2){
+						riskinfo="Aplikasi berikut dapat mengakses seluruh berkas pada memori eksternal dan melakukan akses ke dokumen :";
+					}else if(levelCodeDetail==1){
+						riskinfo="Aplikasi berikut hanya dapat mengakses seluruh berkas pada memori eksternal atau melakukan akses ke dokumen :";
+					}
+			        break;
+			    default:
+			        sencat = "category?";
+				}
+	    	TextView tv = new TextView(this);
+			tv.setText(" \n"+sencat+" = "+levelCodeDetail);
+			tv.setTypeface(null, Typeface.BOLD);
+			ll.addView(tv);
+			
+			
+	    	
+			if (levelCodeDetail!=0){
+				TextView tvinfo = new TextView(this);
+				tvinfo.setText(riskinfo);
+//				tvinfo.setFilters( new InputFilter[] { new InputFilter.LengthFilter(1000)});
+				ll.addView(tvinfo);
+				
+	    		query = "SELECT appName FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = " + categoryCodeDetail + " AND levelCode = " + levelCodeDetail ;
+	        	Cursor categoryRiskCursor = Tools.database.database.rawQuery(query, null);
+	        	startManagingCursor(categoryRiskCursor);
+	        	categoryRiskCursor.moveToFirst();
+	        	
+	        	while(!categoryRiskCursor.isAfterLast()) {
+	        		CheckBox cb = new CheckBox(this);
+	        		String appName = categoryRiskCursor.getString(categoryRiskCursor.getColumnIndex("appName"));
+	                cb.setText(appName);
+	               // cb.setPadding(0, 0, 0, 0);
+	                cb.setId(checkBoxId);
+	                cb.setTag(appName);
+	                cb.setHint(Integer.toString(levelCodeDetail));
+	                checkBoxId++;
+	                cb.setScaleX(0.80f);
+	                cb.setScaleY(0.80f);
+	                cb.setOnCheckedChangeListener(handleCheck(cb));
+	                ll.addView(cb);
+	        		categoryRiskCursor.moveToNext();
+	        	}
+	        	checkBoxId = (int) (Math.floor(checkBoxId/1000)+1)*1000;
+	        	
+	        	Button btnSubmit = new Button(this);
+				btnSubmit.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+				btnSubmit.setText("Add to Ignore List");
+				btnSubmit.setTag(levelCodeDetail);
+				btnSubmit.setId(categoryCodeDetail);
+				btnSubmit.setOnClickListener(updateIgnoreList(checkedIgnoreList));
+		        ll.addView(btnSubmit);
+			} else {
+				checkBoxId = (int) (Math.floor(checkBoxId/1000)+1)*1000;
+				TextView tv2 = new TextView(this);
+				tv2.setText("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
+				ll.addView(tv2);
+			}	
     	}
     	
-    	appList.setText(sbAppList);
     	
-    	RadarDataSet set1 = new RadarDataSet(yVals1, "Set 1");
-        set1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+    	
+//    	List<List<String>> tempRiskLevelDetail = new ArrayList<List<String>>();
+//    	List<String> tempAppNameDetail = new ArrayList<String>();
+//    	String sencat;
+//    	for(int i=0;i<11;i++){
+//    		switch(i) {
+//		    case 0:
+//		        sencat = "Account Information Risk";
+//		        break;
+//		    case 1:
+//		    	sencat = "Browser History and Bookmarks Risk";
+//		        break;
+//		    case 2:
+//		    	sencat = "Calendar Information Risk";
+//		        break;
+//		    case 3:
+//		    	sencat = "Calling Information Risk";
+//		        break;
+//		    case 4:
+//		    	sencat = "Contacts and Profile Risk";
+//		        break;
+//		    case 5:
+//		    	sencat = "Location Risk";
+//		        break;
+//		    case 6:
+//		    	sencat = "Media Risk";
+//		        break;
+//		    case 7:
+//		    	sencat = "Messages Risk";
+//		        break;
+//		    case 8:
+//		    	sencat = "Network Information Risk";
+//		        break;
+//		    case 9:
+//		    	sencat = "Phone Information Risk";
+//		        break;
+//		    case 10:
+//		    	sencat = "External Storage Data Risk";
+//		        break;
+//		    default:
+//		        sencat = "category?";
+//			}
+//    		sbAppList.append(sencat+" = ");
+//    		
+//    		for(int j=5;j>=0;j--){
+//    			if(!isAppNameEmpty(riskListDetail,i,j)){
+//    				//put your code here for graph
+//    				TextView tv = new TextView(this);
+//    				tv.setText(sencat+" = "+j);
+//    				ll.addView(tv);
+//    				
+//    				sbAppList.append(j+".\n");
+//    				yVals1.add(new Entry(j,i));
+//    				tempRiskLevelDetail = new ArrayList<List<String>>();
+//					tempRiskLevelDetail = riskListDetail.get(i);
+//					tempAppNameDetail = new ArrayList<String>();
+//					tempAppNameDetail = tempRiskLevelDetail.get(j);
+//
+//					if(j!=0){
+//						for(String appName: tempAppNameDetail){
+//							//sbAppList.append(appName+", ");
+//							
+//							CheckBox cb = new CheckBox(this);
+//			                cb.setText(appName);
+//			               // cb.setPadding(0, 0, 0, 0);
+//			                cb.setScaleX(0.80f);
+//			                cb.setScaleY(0.80f);
+//			                
+//			                ll.addView(cb);
+//						}
+//					}else{
+//						TextView tv2 = new TextView(this);
+//	    				tv2.setText("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
+//	    				ll.addView(tv2);
+//						//sbAppList.append("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
+//					}
+//					sbAppList.append("\n\n");
+//    				break;
+//    			}
+//    		}
+//    	}
+//    	
+//    	appList.setText(sbAppList);
+    	
+    	RadarDataSet set1 = new RadarDataSet(yVals1, "Risk Level");
+        set1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
         set1.setDrawFilled(true);
         set1.setLineWidth(2f);
         
@@ -1732,10 +2088,11 @@ public class Main extends Activity {
 
         YAxis yAxis = mchart.getYAxis();
         yAxis.setAxisMaxValue(5f);
+        yAxis.setAxisMinValue(-1f);
         yAxis.setTypeface(tf);
         yAxis.setTextSize(9f);
-        yAxis.setStartAtZero(true);
-        yAxis.setLabelCount(6, true);
+        yAxis.setStartAtZero(false);
+        yAxis.setLabelCount(7, true);
       
         mchart.notifyDataSetChanged();
 		mchart.invalidate();
@@ -1746,6 +2103,27 @@ public class Main extends Activity {
         l.setXEntrySpace(7f);
         l.setYEntrySpace(5f);
 
+    }
+    
+    private OnCheckedChangeListener handleCheck (final CheckBox chk)
+    {
+        return new OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+            	int checkBoxItem = chk.getId();
+                if(!isChecked){                           
+                	Object value = checkedIgnoreList.get(checkBoxItem);
+                	if (value != null) {
+                		checkedIgnoreList.remove(checkBoxItem);
+                	}
+                }
+                else
+                {   
+                	checkedIgnoreList.put(checkBoxItem, chk.getText().toString());
+                }
+            }
+        };
     }
 
 	protected Boolean isAppNameEmpty(List<List<List<String>>> riskListDetail,int appRiskCategory, int riskLevel) {
@@ -1810,4 +2188,87 @@ public class Main extends Activity {
 	        }
 		}
 	}
+
+    
+    
+    private OnClickListener updateIgnoreList(final HashMap<Integer, String> checkedIgnoreList){
+    	return new OnClickListener() {
+
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				SQLiteDatabase db;
+				int theCategoryCode = v.getId();
+				int theLevelCode = Integer.parseInt(v.getTag().toString());
+
+		        db = openOrCreateDatabase(
+		            "application_permission.db"
+		            , SQLiteDatabase.CREATE_IF_NECESSARY
+		            , null
+		            );
+		        
+		        ContentValues data=new ContentValues();
+		        
+		        for(Integer checkBoxId: checkedIgnoreList.keySet()){
+		    		if((firstDigit(checkBoxId)-1)==theCategoryCode){
+		    			String appName = checkedIgnoreList.get(checkBoxId);
+		    			data.put("isIgnore",1);
+		    			String whereClause = "categoryCode = " + theCategoryCode + " AND levelCode = " + theLevelCode + " AND appName = '" + appName +"'";
+		    			db.update("ignore_list", data, whereClause, null);
+		    		}
+		        }
+		        db.close();
+		        //loading = ProgressDialog.show(Main.this, "","Loading...", true);
+		        //finish();
+		        //startActivity(getIntent());
+		        loading = ProgressDialog.show(Main.this, "","Loading...", true);
+		        Intent refresh = new Intent(Main.this, Main.class);
+		        startActivity(refresh);
+		        //finish(); //
+			}
+    		
+    	};
+    
+    }
+    
+    public int firstDigit(int x) {
+    	if (x<10000){
+    		return Integer.parseInt(Integer.toString(x).substring(0, 1));
+    	} else {
+    		return Integer.parseInt(Integer.toString(x).substring(0, 2));
+    	}
+	}
+    
+    @Override
+	public void onBackPressed() {
+	    // do something on back.
+    	finish();
+   	moveTaskToBack(true);
+    	
+//    	   Intent intent = new Intent(Intent.ACTION_MAIN);
+//    	   intent.addCategory(Intent.CATEGORY_HOME);
+//    	   intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//    	   startActivity(intent);	   
+    	return;
+	}
+    
+    @Override
+    public void onResume()
+        {  // After a pause OR at startup
+        super.onResume();
+        
+//        Intent refresh = new Intent(Main.this, Main.class);
+//        refresh.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(refresh);
+//        startActivity(refresh);
+        //Refresh your stuff here
+         }
+    
+    @Override
+    public void onRestart() { 
+        super.onRestart();
+        Intent refresh = new Intent(Main.this, Main.class);
+        startActivity(refresh);
+        //When BACK BUTTON is pressed, the activity on the stack is restarted
+        //Do what you want on the refresh procedure here
+    }
 }
