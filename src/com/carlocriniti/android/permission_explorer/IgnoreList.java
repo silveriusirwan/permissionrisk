@@ -39,7 +39,7 @@ public class IgnoreList extends Activity{
 	public void createIgnoredList(int ignoredCode){
 		int checkBoxId = 1000;
     	for(int i = 0; i<11;i++){
-    		String query = "SELECT appName FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = "+ i;
+    		String query = "SELECT appName, marketSource FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = "+ i;
         	Cursor ignoredListCursor = Tools.database.database.rawQuery(query, null);
         	startManagingCursor(ignoredListCursor);
         	ignoredListCursor.moveToFirst();
@@ -91,7 +91,8 @@ public class IgnoreList extends Activity{
     		while(!ignoredListCursor.isAfterLast()) {
         		CheckBox cb = new CheckBox(this);
         		String appName = ignoredListCursor.getString(ignoredListCursor.getColumnIndex("appName"));
-                cb.setText(appName);
+        		String marketSource = ignoredListCursor.getString(ignoredListCursor.getColumnIndex("marketSource"));
+                cb.setText(appName+" > "+ marketSource);
                // cb.setPadding(0, 0, 0, 0);
                 cb.setId(checkBoxId);
                 cb.setTag(appName);
@@ -157,6 +158,8 @@ public class IgnoreList extends Activity{
 		        for(Integer checkBoxId: checkedIgnoreList.keySet()){
 		    		if((firstDigit(checkBoxId)-1)==theCategoryCode){
 		    			String appName = checkedIgnoreList.get(checkBoxId);
+		    			String[] parts = appName.split(">");
+		    			appName = parts[0].trim();
 		    			data.put("isIgnore",0);
 		    			String whereClause = "categoryCode = " + theCategoryCode + " AND appName = '" + appName +"'";
 		    			db.update("ignore_list", data, whereClause, null);
@@ -166,9 +169,10 @@ public class IgnoreList extends Activity{
 		        //loading = ProgressDialog.show(IgnoreList.this, "","Loading...", true);
 //		        startActivity(getIntent());
 //		        finish();
+		        finish();
 		        Intent refresh = new Intent(IgnoreList.this, IgnoreList.class);
 		        startActivity(refresh);
-		        finish(); //
+		         //
 			}
     		
     	};

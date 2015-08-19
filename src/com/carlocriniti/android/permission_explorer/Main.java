@@ -134,17 +134,7 @@ public class Main extends Activity {
 	public static final int SECURITY_EAP = 3;
 	// BN add - END
 	
-	// Listes affich�es � l'utilisateur
-	/*private ListView lstCategory;
-	private ListView lstApplication;
-	private ListView lstPermission;
 	
-	private TextView tabCategory;
-	private TextView tabApplication;
-	private TextView tabPermission;
-	
-	private enum VIEWS {Category, Application, Permission};
-	private VIEWS currentView;*/
 	
 	// Code de retour de l'�cran de pr�f�rences
 	private final int ACTIVITY_RESULT_PREFERENCE = 1000;
@@ -160,9 +150,7 @@ public class Main extends Activity {
     	super.onCreate(savedInstanceState);
     	
     	setContentView(R.layout.main);
-    	// Chargement de l'interface graphique
-      //  setContentView(R.layout.main);
-        
+    	
         //BN add to merge with security scanner
         Log.i("datax", this.getApplicationContext().getPackageCodePath().toString());
 		rootStatus = (TextView)findViewById(R.id.id_root_status);
@@ -228,12 +216,6 @@ public class Main extends Activity {
 //			}
 //		} else nfcStatus.setText("NFC status = no NFC adapter");
 		
-//		boolean rootstatus2 = isRooted();
-//		rootStatus.setText("Root status= "+String.valueOf(rootstatus2));
-//		
-//		//add new line
-//		data.add("Root Status");
-//		data.add(String.valueOf(rootstatus2));
 		
 		// Check for available NFC Adapter
         /*PackageManager pm = getPackageManager();
@@ -259,99 +241,7 @@ public class Main extends Activity {
 //		    }
 //		}
 		
-//		int lockType = LockType.getCurrent(getContentResolver());
-//		String lockType2;
-//		switch(lockType) {
-//	    case 1:
-//	        lockType2 = "NONE or SLIDE";
-//	        break;
-//	    case 3:
-//	    	lockType2 = "FACE WITH PATTERN";
-//	        break;
-//	    case 4:
-//	    	lockType2 = "FACE WITH PIN";
-//	        break;
-//	    case 10:
-//	    	lockType2 = "PATTERN";
-//	        break;    
-//	    case 11:
-//	    	lockType2 = "PIN";
-//	        break;
-//	    case 12:
-//	    	lockType2 = "PASSWORD ALPHABETIC";
-//	        break;
-//	    case 13:
-//	    	lockType2 = "PASSWORD ALPHANUMERIC";
-//	        break;
-//	    default:
-//	    	lockType2 = "ERROR";
-//		}
-//		
-//		
-//		lockStatus.setText("Lock status= "+String.valueOf(lockType2));
-//		data.add("Lock screen status");
-//		data.add(String.valueOf(lockType2));
-		
-//		boolean isNonPlayAppAllowed = isTrustUnknownSource();
-//		unknownStatus.setText("Unknown sources status= "+String.valueOf(isNonPlayAppAllowed));
-//		data.add("Unknown sources status");
-//		data.add(String.valueOf(isNonPlayAppAllowed));
-		
-//		boolean encryptedStatus2 = isEncrypted(this.getApplicationContext());
-//		encryptedStatus.setText("Encrypted status= "+String.valueOf(encryptedStatus2));
-//		data.add("Phone Encryption status");
-//		data.add(String.valueOf(encryptedStatus2));
-		
-//		boolean locationStatus2 = isGpsEnabled();
-//		locationStatus.setText("Location status= "+String.valueOf(locationStatus2));
-//		data.add("Location status");
-//		data.add(String.valueOf(locationStatus2));
-		
-//		boolean simLockStatus2 = isSimPinRequired(getApplicationContext());
-//		simlockStatus.setText("Sim lock status= "+String.valueOf(simLockStatus2));
-//		data.add("Sim lock status");
-//		data.add(String.valueOf(simLockStatus2));
-		
-		/*WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-		List<WifiConfiguration> arraylist = wifiManager.getConfiguredNetworks();
-		Log.i("WifiPreference","No of Networks "+wifiManager.getDhcpInfo().toString());//+arraylist.size());
-		*/
-		//wifi = new ArrayList<String>();
-		/*
-		WifiManager wifiManager=(WifiManager)getSystemService(Context.WIFI_SERVICE);
-		List<WifiConfiguration> networks=wifiManager.getConfiguredNetworks();
-		for (WifiConfiguration config : networks) {
-			Log.i("Wifi",config.SSID + " " +getSecurity(config));
-			
-		}*/
 	
-/*		
-		StringBuilder strWifiStatus = new StringBuilder(); 
-		dataWifi = new ArrayList<String>();
-		WifiManager wifiManager=(WifiManager)getSystemService(Context.WIFI_SERVICE); 
-		List<WifiConfiguration> networks=wifiManager.getConfiguredNetworks(); 
-		int openwifi=0;
-		int sumwifi=0;
-		float percentwifi;
-		//strWifiStatus.append("Wifi History:\n"); 
-		for (WifiConfiguration config : networks) 
-		{
-			//Log.i("Wifi",config.SSID + " " +getSecurity(config)); 
-//			strWifiStatus.append(config.SSID+" ("+getSecurity(config)+")\n");
-			if (getSecurity(config)=="NONE"){
-				openwifi=openwifi+1;
-			}
-			sumwifi=sumwifi+1;
-//			dataWifi.add(config.SSID);
-//			dataWifi.add(getSecurity(config));
-		}
-//		strWifiStatus.append("Jumlah Open Wifi = "+openwifi);
-//		strWifiStatus.append("Jumlah Wifi = "+sumwifi);
-		percentwifi = ((float) openwifi/sumwifi)*100;
-		strWifiStatus.append("Persentase Open Wifi = "+ percentwifi + " ("+ openwifi + "/" + sumwifi +")");
-
-		wifiHistory.setText(strWifiStatus);
-*/		
 		dataApplication = new ArrayList<String>(); 
 		final PackageManager pm = getPackageManager(); 
 		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA); 
@@ -372,65 +262,6 @@ public class Main extends Activity {
 		}
         //BN add - END
         
-        // R�cup�ration des listes et ajout des �venements de clic
-        /*lstCategory = (ListView)findViewById(R.id.listviewcategory);
-        lstCategory.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-				// Ouverture du d�tail d'une cat�gorie
-				Intent intent = new Intent(getBaseContext() , CategoryDetail.class);     
-				intent.putExtra("categoryId",id); 			  		  
-				startActivity(intent); 
-			}
-        });
-        
-        lstApplication = (ListView)findViewById(R.id.listviewapplication);
-        lstApplication.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-				// Ouverture du d�tail d'une application
-				Intent intent = new Intent(getBaseContext() , ApplicationDetail.class);     
-				intent.putExtra("applicationId",id); 			  		  
-				startActivity(intent); 
-			}
-        });
-        
-        lstPermission = (ListView)findViewById(R.id.listviewpermission);
-        lstPermission.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-				// Ouverture du d�tail d'une permission
-				Intent intent = new Intent(getBaseContext() , PermissionDetail.class);     
-				intent.putExtra("permissionId",id); 			  		  
-				startActivity(intent); 
-			}
-        });
-        
-        tabCategory = (TextView)findViewById(R.id.tab_category);
-        tabCategory.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (currentView != VIEWS.Category) {
-					switchTo(VIEWS.Category);
-				}
-			}
-        });
-        
-        tabApplication = (TextView)findViewById(R.id.tab_application);
-        tabApplication.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (currentView != VIEWS.Application) {
-					switchTo(VIEWS.Application);
-				}
-			}
-        });
-        
-        tabPermission = (TextView)findViewById(R.id.tab_permission);
-        tabPermission.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				if (currentView != VIEWS.Permission) {
-					switchTo(VIEWS.Permission);
-				}
-			}
-        });
-        
-        switchTo(VIEWS.Category);*/
         
         // Cr�ation/ouverture de la base de donn�es
         Tools.database = new Database(this);
@@ -545,27 +376,39 @@ public class Main extends Activity {
             	xValue.add("Operating System");
             	xValue.add("Device");
             	
+            	String coninfo ="";
             	for(int i=0;i<4;i++){
             		if(i==0){
             			if (locstat==false){
             				if(percentwifi==0){
             					conlevel=5;
+            					coninfo="";
             				}else if(percentwifi>0 && percentwifi<=10 ){
             					conlevel=4;
+            					coninfo="> Adanya penggunaan open Wi-Fi di bawah 10% memungkinkan transportasi data yang tidak aman.";
             				}else if(percentwifi>10 && percentwifi<=30 ){
             					conlevel=3;
+            					coninfo="> Adanya penggunaan open Wi-Fi antara 11-30% memungkinkan transportasi data yang tidak aman.";
             				}else if(percentwifi>30){
             					conlevel=2;
+            					coninfo="> Adanya penggunaan open Wi-Fi di atas 30% memungkinkan transportasi data yang tidak aman.";
             				}
             			}else if(locstat==true){
             				if(percentwifi==0){
             					conlevel=4;
+            					coninfo="> Lokasi pengguna dapat diketahui dan dilacak oleh aplikasi yang memiliki permission terkait.";
             				}else if(percentwifi>0 && percentwifi<=10 ){
             					conlevel=3;
+            					coninfo="> Adanya penggunaan open Wi-Fi di bawah 10% memungkinkan transportasi data yang tidak aman.\n"
+            							+ "> Lokasi pengguna dapat diketahui dan dilacak oleh aplikasi yang memiliki permission terkait.";
             				}else if(percentwifi>10 && percentwifi<=30 ){
             					conlevel=2;
+            					coninfo="> Adanya penggunaan open Wi-Fi antara 11-30% memungkinkan transportasi data yang tidak aman.\n"
+            							+ "> Lokasi pengguna dapat diketahui dan dilacak oleh aplikasi yang memiliki permission terkait.";
             				}else if(percentwifi>30){
             					conlevel=1;
+            					coninfo="> Adanya penggunaan open Wi-Fi di atas 30% memungkinkan transportasi data yang tidak aman.\n"
+            							+ "> Lokasi pengguna dapat diketahui dan dilacak oleh aplikasi yang memiliki permission terkait.";
             				}
             			}
             			yValue.add(new Entry(conlevel,i));
@@ -581,6 +424,10 @@ public class Main extends Activity {
                 		}
             			textHasil.append(System.getProperty("line.separator"));
             			textHasil.append(" > Location status = "+ locstat);
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(" Potential Danger = ");
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(coninfo);
                 		textHasil.append(System.getProperty("line.separator"));
                 		textHasil.append(System.getProperty("line.separator"));
             		}
@@ -590,12 +437,16 @@ public class Main extends Activity {
                 	    		conlevel = 5;
                 	    	}else if (unkstat == true){
                 	    		conlevel = 2;
+                	    		coninfo="> Pengguna dapat melakukan instalasi aplikasi selain dari Play Store yang dapat meningkatkan risiko infeksi malware.";
                 	    	}
                 	    }else if (verstat==false){
                 	    	if (unkstat == true){
                 	    		conlevel = 1;
+                	    		coninfo="> Aplikasi tidak diverifikasi oleh Google pada saat instalasi atau setelahnya.\n"
+                	    				+ "> Pengguna dapat melakukan instalasi aplikasi selain dari Play Store yang dapat meningkatkan risiko infeksi malware.";
                 	    	}else if (unkstat == false){
                 	    		conlevel = 3;
+                	    		coninfo="> Aplikasi tidak diverifikasi oleh Google pada saat instalasi atau setelahnya.";
                 	    	}
                 	    }
             			yValue.add(new Entry(conlevel,i));
@@ -607,6 +458,10 @@ public class Main extends Activity {
                     	
                 	    textHasil.append(" > Unknown sources status= "+String.valueOf(unkstat));
                 	    textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(" Potential Danger = ");
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(coninfo);
+                	    textHasil.append(System.getProperty("line.separator"));
                 	    textHasil.append(System.getProperty("line.separator"));
             		}
             		conlevel=0;
@@ -614,7 +469,10 @@ public class Main extends Activity {
             			if (rootstat==true){
                 	    	if (bootstat==true) {
                 	    		conlevel = 2;
+                	    		coninfo="> Seluruh aplikasi dapat memiliki hak akses penuh (superuser).";
                 	    	}else {
+                	    		coninfo="> Seluruh aplikasi dapat memiliki hak akses penuh (superuser).\n"
+                	    				+ "> Pengguna dapat melakukan modifikasi OS, seperti instalasi custom ROM dll.";
                 	    		conlevel = 1;
                 	    	}
                 	    }else if (rootstat==false){
@@ -629,6 +487,10 @@ public class Main extends Activity {
                 	    
                 	    textHasil.append(" > Bootloader status = "+ String.valueOf(bootstat));
                 	    textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(" Potential Danger = ");
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(coninfo);
+                	    textHasil.append(System.getProperty("line.separator"));
                 	    textHasil.append(System.getProperty("line.separator"));
             		}
             		conlevel=0;
@@ -640,36 +502,51 @@ public class Main extends Activity {
             							conlevel=5;
             						}else if(simstat==false){
             							conlevel=4;
+            							coninfo="> SIM card dapat diakses oleh orang yang tidak berhak.";
             						}         						
             					}else if(sdenstat==false){
             						if(simstat==true){
             							conlevel=4;
+            							coninfo="> Data dalam memori eksternal dapat dibaca oleh orang yang dapat membuka screen lock.";
             						}else if(simstat==false){
             							conlevel=3;
+            							coninfo="> SIM card dapat diakses oleh orang yang tidak berhak.\n"
+            									+ "> Data dalam memori eksternal dapat dibaca oleh orang yang dapat membuka screen lock.";
             						}
             					}
             				}else if(phenstat==false){
             					if(sdenstat==true){
-            							conlevel=0;         	         						
+            							conlevel=0;
+            							coninfo="> DATA TIDAK VALID. (SD card encryption tidak dapat diaktifkan tanpa mengaktifkan Phone encryption terlebih dahulu.)";
             					}else if(sdenstat==false){
             						if(simstat==true){
             							conlevel=3;
+            							coninfo="> Seluruh data dalam memori internal dan eksternal dapat dibaca oleh orang yang dapat membuka screen lock.";
             						}else if(simstat==false){
             							conlevel=2;
+            							coninfo="> Seluruh data dalam memori internal dan eksternal dapat dibaca oleh orang yang dapat membuka screen lock.\n"
+            									+ "> SIM card dapat diakses oleh orang yang tidak berhak.\n";
             						}
             					}
             				}
             			}else if(scrstat==false){
             				if (phenstat==true){
             					conlevel=0;
+    							coninfo="> DATA TIDAK VALID. (Phone Encryption tidak dapat diaktifkan tanpa mengaktifkan Screen Lock terlebih dahulu.)";
             				}else if(phenstat==false){
             					if(sdenstat==true){
-            							conlevel=0;         	         						
+            							conlevel=0;   
+            							coninfo="> DATA TIDAK VAID. (SD card encryption tidak dapat diaktifkan tanpa mengaktifkan Phone encryption terlebih dahulu.)";
             					}else if(sdenstat==false){
             						if(simstat==true){
             							conlevel=2;
+            							coninfo="> Seluruh data dalam memori internal dan eksternal dapat dibaca oleh orang yang dapat membuka screen lock.\n"
+            									+ "Perangkat dapat diakses oleh orang yang tidak berhak.";
             						}else if(simstat==false){
             							conlevel=1;
+            							coninfo="> Seluruh data dalam memori internal dan eksternal dapat dibaca oleh orang yang dapat membuka screen lock.\n"
+            									+ "> SIM card dapat diakses oleh orang yang tidak berhak.\n"
+            									+ "> Perangkat dapat diakses oleh orang yang tidak berhak.";
             						}
             					}
             				}
@@ -688,6 +565,10 @@ public class Main extends Activity {
                 	    textHasil.append(System.getProperty("line.separator"));
                 	    
                 	    textHasil.append(" > SIM card PIN status = "+String.valueOf(simstat));
+                	    textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(" Potential Danger = ");
+            			textHasil.append(System.getProperty("line.separator"));
+            			textHasil.append(coninfo);
             		}
             	}
             	
@@ -730,46 +611,10 @@ public class Main extends Activity {
             }
         });
         
-//        readResult = (TextView)findViewById(R.id.id_hello_world);
-        /*
-        String FILE_NAME = "permission.csv";
-        String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File file = new File(baseDir, FILE_NAME);
 
-        String line = "";
-        String date="";
-
-        StringBuilder textHasil = new StringBuilder();
-
-        try {
-            FileReader fReader = new FileReader(file);
-            BufferedReader bReader = new BufferedReader(fReader);
-
-            
-        	
-                while ((line = bReader.readLine()) != null) {
-                 String[] RowData = line.split(",");
-                 date = RowData[0];
-               
-				String date2 = date.replaceAll("\"", "");
-                 String value = RowData[1];
-                 String value2 = value.replaceAll("\"", "");
-                 textHasil.append(date2+" = "+value2);
-                 
-                 textHasil.append(System.getProperty("line.separator"));
-                 
-                	// do something with "data" and "value"
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }           
-            readResult.setText(textHasil);
-            readResult.setMovementMethod(new ScrollingMovementMethod());
-        */
         
         exportCSV();
 
-//        spinner.setVisibility(View.GONE);
     }
     
 
@@ -1077,33 +922,6 @@ public class Main extends Activity {
 	}
     //BN add - END
     
-    /*private void switchTo(VIEWS newView) {
-    	currentView = newView;
-    	
-    	if (currentView == VIEWS.Category) {
-    		lstCategory.setVisibility(View.VISIBLE);
-    		tabCategory.setTextColor(getResources().getColor(R.color.text_tab_selected));
-    	} else {
-    		lstCategory.setVisibility(View.INVISIBLE);
-    		tabCategory.setTextColor(getResources().getColor(R.color.text_tab));
-    	}
-    	
-    	if (currentView == VIEWS.Application) {
-    		lstApplication.setVisibility(View.VISIBLE);
-    		tabApplication.setTextColor(getResources().getColor(R.color.text_tab_selected));
-    	} else {
-    		lstApplication.setVisibility(View.INVISIBLE);
-    		tabApplication.setTextColor(getResources().getColor(R.color.text_tab));
-    	}
-    	
-    	if (currentView == VIEWS.Permission) {
-    		lstPermission.setVisibility(View.VISIBLE);
-    		tabPermission.setTextColor(getResources().getColor(R.color.text_tab_selected));
-    	} else {
-    		lstPermission.setVisibility(View.INVISIBLE);
-    		tabPermission.setTextColor(getResources().getColor(R.color.text_tab));
-    	}
-    }*/
     
     /*
 	 * onDestroy :
@@ -1166,9 +984,10 @@ public class Main extends Activity {
     		case R.id.menu_exportcsv:
     			//finish();
     			loading = ProgressDialog.show(Main.this, "","Loading...", true);
+    			//finish();
     			Intent intentIgnore = new Intent(Main.this, IgnoreList.class);
                 startActivity(intentIgnore);
-                finish();
+                
                // exportCSV();
                 //BN added to start exporting CSV
     			//writeWifiCSV(dataWifi);
@@ -1177,19 +996,7 @@ public class Main extends Activity {
     		default:
     			return super.onOptionsItemSelected(item);
     	}
-    	/*int id = item.getItemId();
-		if (id == R.id.menu_update) {
-			Tools.database.updateDatabase(this);
-			return true;
-		}else if(id == R.id.menu_preferences){
-			Intent intent = new Intent(getBaseContext() , Preference.class);			  		  
-			startActivityForResult(intent, ACTIVITY_RESULT_PREFERENCE); 
-            return true;
-		}else if(id == R.id.menu_exportcsv){
-			Log.i(TAG,"exportCSV");
-        	exportCSV(); //BN added to start exporting CSV
-            return true;
-		}*/
+    	
 	}
     
     /*
@@ -1334,39 +1141,12 @@ public class Main extends Activity {
     
     public void exportCSV(){
         this.context = this;
-        //Cursor data = Tools.database.database.query("application", new String[]{"label", "name", "version_code", "version_name", "system"}, "id = ?", new String[]{applicationId}, null, null, null);
-        //Cursor data = Tools.database.database.query("application", new String[]{"name"}, null, null, null, null, null);
-        //if (data.getCount() == 1) {
+        
         	Log.i(TAG,"after if");
-        	//data.moveToFirst();
         	
-        	//packageName = data.getString(1);
-        	
-        	// Affichage du nom de l'application, du package et de la version
-        	/*((TextView)findViewById(R.id.application_detail_label)).setText(data.getString(0));
-        	((TextView)findViewById(R.id.application_detail_name)).setText(data.getString(1));
-        	((TextView)findViewById(R.id.application_detail_version)).setText(data.getString(2) + " / " + data.getString(3));
-        	
-        	if (data.getInt(4) == 1)
-        		((TextView)findViewById(R.id.application_detail_system)).setVisibility(View.VISIBLE);
-        	else
-        		((TextView)findViewById(R.id.application_detail_system)).setVisibility(View.GONE);
-        	*/
-        	// R�cup�ration du nombre de permissions utilis�es et affichage
-        	/*data = Tools.database.database.rawQuery("SELECT Count(*) AS number " +
-        											"FROM relation_application_permission " +
-        											"WHERE application = ?;", new String[]{applicationId});
-        	data.moveToFirst();
-        	((TextView)findViewById(R.id.application_detail_permission_count)).setText(data.getString(0));
-        	*/
-        	// R�cup�ration des permissions et cr�ation de la liste
         	//Cursor permissionListCursor = Tools.database.database.rawQuery("SELECT permission.id AS _id, permission.name AS name FROM relation_application_permission INNER JOIN permission ON relation_application_permission.permission = permission.id WHERE relation_application_permission.application = ? ORDER BY permission.name COLLATE NOCASE ASC;", new String[] {applicationId});
         	Cursor permissionListCursor = Tools.database.database.rawQuery("SELECT permission.id AS _id, application.label as appName, permission.name AS name FROM relation_application_permission INNER JOIN permission ON relation_application_permission.permission = permission.id INNER JOIN application ON relation_application_permission.application = application.id WHERE application.system = 0 OR application.system = 1 ORDER BY appName COLLATE NOCASE ASC;", null);
         	startManagingCursor(permissionListCursor);
-        	//startManagingCursor(permissionListCursorAll);
-        	//ListAdapter permissionAdapter = new SimpleCursorAdapter(this, R.layout.permission_list_item, permissionListCursor, new String[] {"name"}, new int[]{R.id.listviewpermissiontext});
-        	//permissionList = (ListView)findViewById(R.id.application_detail_permission_list);
-        	//permissionList.setAdapter(permissionAdapter);
         	
         	//create Map to store app and its permission
         	Map<String, List<String>> multimapPermission = new HashMap<String, List<String>>();
@@ -1672,7 +1452,6 @@ public class Main extends Activity {
         }
     	
     	//get risk detail 0-5 for each category
-    	//getRiskDetail(multimapRisk);
     	getRiskDetail(0);
     	
     }
@@ -1686,15 +1465,31 @@ public class Main extends Activity {
     	if(isExist){
     		return true;
     	}
-//    	riskDetailCursor.moveToFirst();
-//    	while(!riskDetailCursor.isAfterLast()) {
-//    		
-//    		riskDetailCursor.moveToNext();
-//    	}
     	return false;
     }
     
     protected void addToIgnoreList(int _categoryCode, int _levelCode, String _appName, int _ignore){
+    	String marketSource = "";
+    	final PackageManager pm = getPackageManager(); 
+		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA); 
+		for (ApplicationInfo appInfo : packages) 
+		{
+			String marketName = getMarket(appInfo.packageName);
+			ApplicationInfo lApplicationInfo = null;
+			try {
+				lApplicationInfo = pm.getApplicationInfo(appInfo.packageName, 0);
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String appName = (String) (lApplicationInfo != null ? pm.getApplicationLabel(lApplicationInfo) : "Unknown"); 			
+			//Log.i("PackageMarket", marketName); 
+			if(appName.equals(_appName)){
+				marketSource = marketName;
+				break;
+			}
+		}
+    	
     	SQLiteDatabase db;
 
         db = openOrCreateDatabase(
@@ -1708,32 +1503,12 @@ public class Main extends Activity {
         insertValues.put("levelCode", _levelCode);
         insertValues.put("appName", _appName);
         insertValues.put("isIgnore", _ignore);
+        insertValues.put("marketSource", marketSource);
         db.insert("ignore_list", null, insertValues);
         db.close();
     }
     
     protected void getRiskDetail(int ignoredCode){
-//    	List<List<List<String>>> riskListDetail = new ArrayList<List<List<String>>>();
-//    	List<List<String>> riskLevelDetail;
-//    	List<String> appNameDetail;
-//    	StringBuilder sbAppList = new StringBuilder();
-    	
-    	
-    	
-//    	for(int i=0;i<11;i++){
-//    		riskLevelDetail = new ArrayList<List<String>>();
-//    		for(int j=0; j<6; j++){
-//    			appNameDetail = new ArrayList<String>();
-//    			for(String appName: multimapRisk.keySet()){
-//    				List<Integer> riskList = multimapRisk.get(appName);
-//	    			if(riskList.get(i)==j){
-//						appNameDetail.add(appName);
-//					}
-//	    		}	
-//    			riskLevelDetail.add(appNameDetail);
-//			}
-//    		riskListDetail.add(riskLevelDetail);
-//    	}
     	
     	//data prep for chart
     	
@@ -1946,7 +1721,7 @@ public class Main extends Activity {
 //				tvinfo.setFilters( new InputFilter[] { new InputFilter.LengthFilter(1000)});
 				ll.addView(tvinfo);
 				
-	    		query = "SELECT appName FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = " + categoryCodeDetail + " AND levelCode = " + levelCodeDetail ;
+	    		query = "SELECT appName, marketSource FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = " + categoryCodeDetail + " AND levelCode = " + levelCodeDetail ;
 	        	Cursor categoryRiskCursor = Tools.database.database.rawQuery(query, null);
 	        	startManagingCursor(categoryRiskCursor);
 	        	categoryRiskCursor.moveToFirst();
@@ -1954,7 +1729,8 @@ public class Main extends Activity {
 	        	while(!categoryRiskCursor.isAfterLast()) {
 	        		CheckBox cb = new CheckBox(this);
 	        		String appName = categoryRiskCursor.getString(categoryRiskCursor.getColumnIndex("appName"));
-	                cb.setText(appName);
+	        		String marketSource = categoryRiskCursor.getString(categoryRiskCursor.getColumnIndex("marketSource"));
+	                cb.setText(appName+" > "+ marketSource);
 	               // cb.setPadding(0, 0, 0, 0);
 	                cb.setId(checkBoxId);
 	                cb.setTag(appName);
@@ -1982,91 +1758,6 @@ public class Main extends Activity {
 				ll.addView(tv2);
 			}	
     	}
-    	
-    	
-    	
-//    	List<List<String>> tempRiskLevelDetail = new ArrayList<List<String>>();
-//    	List<String> tempAppNameDetail = new ArrayList<String>();
-//    	String sencat;
-//    	for(int i=0;i<11;i++){
-//    		switch(i) {
-//		    case 0:
-//		        sencat = "Account Information Risk";
-//		        break;
-//		    case 1:
-//		    	sencat = "Browser History and Bookmarks Risk";
-//		        break;
-//		    case 2:
-//		    	sencat = "Calendar Information Risk";
-//		        break;
-//		    case 3:
-//		    	sencat = "Calling Information Risk";
-//		        break;
-//		    case 4:
-//		    	sencat = "Contacts and Profile Risk";
-//		        break;
-//		    case 5:
-//		    	sencat = "Location Risk";
-//		        break;
-//		    case 6:
-//		    	sencat = "Media Risk";
-//		        break;
-//		    case 7:
-//		    	sencat = "Messages Risk";
-//		        break;
-//		    case 8:
-//		    	sencat = "Network Information Risk";
-//		        break;
-//		    case 9:
-//		    	sencat = "Phone Information Risk";
-//		        break;
-//		    case 10:
-//		    	sencat = "External Storage Data Risk";
-//		        break;
-//		    default:
-//		        sencat = "category?";
-//			}
-//    		sbAppList.append(sencat+" = ");
-//    		
-//    		for(int j=5;j>=0;j--){
-//    			if(!isAppNameEmpty(riskListDetail,i,j)){
-//    				//put your code here for graph
-//    				TextView tv = new TextView(this);
-//    				tv.setText(sencat+" = "+j);
-//    				ll.addView(tv);
-//    				
-//    				sbAppList.append(j+".\n");
-//    				yVals1.add(new Entry(j,i));
-//    				tempRiskLevelDetail = new ArrayList<List<String>>();
-//					tempRiskLevelDetail = riskListDetail.get(i);
-//					tempAppNameDetail = new ArrayList<String>();
-//					tempAppNameDetail = tempRiskLevelDetail.get(j);
-//
-//					if(j!=0){
-//						for(String appName: tempAppNameDetail){
-//							//sbAppList.append(appName+", ");
-//							
-//							CheckBox cb = new CheckBox(this);
-//			                cb.setText(appName);
-//			               // cb.setPadding(0, 0, 0, 0);
-//			                cb.setScaleX(0.80f);
-//			                cb.setScaleY(0.80f);
-//			                
-//			                ll.addView(cb);
-//						}
-//					}else{
-//						TextView tv2 = new TextView(this);
-//	    				tv2.setText("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
-//	    				ll.addView(tv2);
-//						//sbAppList.append("Semua aplikasi tidak memiliki permission yang terkait dengan kategori risiko ini.");
-//					}
-//					sbAppList.append("\n\n");
-//    				break;
-//    			}
-//    		}
-//    	}
-//    	
-//    	appList.setText(sbAppList);
     	
     	RadarDataSet set1 = new RadarDataSet(yVals1, "Risk Level");
         set1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
@@ -2211,19 +1902,22 @@ public class Main extends Activity {
 		        for(Integer checkBoxId: checkedIgnoreList.keySet()){
 		    		if((firstDigit(checkBoxId)-1)==theCategoryCode){
 		    			String appName = checkedIgnoreList.get(checkBoxId);
+		    			String[] parts = appName.split(">");
+		    			appName = parts[0].trim();
 		    			data.put("isIgnore",1);
 		    			String whereClause = "categoryCode = " + theCategoryCode + " AND levelCode = " + theLevelCode + " AND appName = '" + appName +"'";
 		    			db.update("ignore_list", data, whereClause, null);
 		    		}
 		        }
 		        db.close();
-		        //loading = ProgressDialog.show(Main.this, "","Loading...", true);
-		        //finish();
+		        //loading = ProgressDialog.show(Main.this, "","Loading...", true);      
 		        //startActivity(getIntent());
+		        
 		        loading = ProgressDialog.show(Main.this, "","Loading...", true);
 		        Intent refresh = new Intent(Main.this, Main.class);
 		        startActivity(refresh);
-		        //finish(); //
+		        //finish();
+		         //
 			}
     		
     	};
@@ -2255,19 +1949,19 @@ public class Main extends Activity {
     public void onResume()
         {  // After a pause OR at startup
         super.onResume();
-        
-//        Intent refresh = new Intent(Main.this, Main.class);
-//        refresh.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(refresh);
+       
+       // Intent refresh = new Intent(Main.this, Main.class);
+        //refresh.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+     //   startActivity(refresh);
 //        startActivity(refresh);
         //Refresh your stuff here
          }
-    
+   
     @Override
     public void onRestart() { 
         super.onRestart();
-        Intent refresh = new Intent(Main.this, Main.class);
-        startActivity(refresh);
+       // Intent refresh = new Intent(Main.this, Main.class);
+        //startActivity(refresh);
         //When BACK BUTTON is pressed, the activity on the stack is restarted
         //Do what you want on the refresh procedure here
     }
