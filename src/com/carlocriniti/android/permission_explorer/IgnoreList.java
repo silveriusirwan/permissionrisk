@@ -39,10 +39,10 @@ public class IgnoreList extends Activity{
 	public void createIgnoredList(int ignoredCode){
 		int checkBoxId = 1000;
     	for(int i = 0; i<11;i++){
-    		String query = "SELECT appName, marketSource FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = "+ i;
+    		String query = "SELECT appName, marketSource FROM ignore_list WHERE isIgnore = " + ignoredCode + " AND categoryCode = "+ i+" ORDER BY appName asc";
         	Cursor ignoredListCursor = Tools.database.database.rawQuery(query, null);
         	startManagingCursor(ignoredListCursor);
-        	ignoredListCursor.moveToFirst();
+        	ignoredListCursor.moveToFirst(); 
     		
     		String sencat;
 	    	switch(i) {
@@ -107,7 +107,7 @@ public class IgnoreList extends Activity{
     		
     		Button btnSubmit = new Button(this);
     		btnSubmit.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-    		btnSubmit.setText("Remove from Ignore List");
+    		btnSubmit.setText("Remove from Exception List");
     		btnSubmit.setId(i);
     		btnSubmit.setOnClickListener(updateIgnoreList(checkedIgnoreList));
             ll.addView(btnSubmit);

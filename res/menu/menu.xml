@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_update"
+    <!--  <item android:id="@+id/menu_update"
           android:title="@string/menu_update"/>
 	<item android:id="@+id/menu_preferences"
           android:title="@string/menu_preferences"/>
+	-->
 	<item android:id="@+id/menu_exportcsv"
-          android:title="Ignore List"/>
+          android:title="Exception List"/>
 </menu>

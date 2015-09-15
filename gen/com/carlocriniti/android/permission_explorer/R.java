@@ -8,6 +8,9 @@
 package com.carlocriniti.android.permission_explorer;
 
 public final class R {
+    public static final class array {
+        public static final int display_arrays=0x7f070000;
+    }
     public static final class attr {
     }
     public static final class color {
@@ -26,67 +29,64 @@ public final class R {
         public static final int marker2=0x7f020003;
     }
     public static final class id {
-        public static final int application_detail_label=0x7f090001;
-        public static final int application_detail_manage_button=0x7f090000;
-        public static final int application_detail_name=0x7f090004;
-        public static final int application_detail_permission_count=0x7f090006;
-        public static final int application_detail_permission_list=0x7f090007;
-        public static final int application_detail_system=0x7f090002;
-        public static final int application_detail_version=0x7f090005;
-        public static final int application_export_csv_button=0x7f090003;
-        public static final int category_detail_application_count=0x7f09000c;
-        public static final int category_detail_application_list=0x7f09000d;
-        public static final int category_detail_description=0x7f09000b;
-        public static final int category_detail_name=0x7f09000a;
-        public static final int id_app_list=0x7f090034;
-        public static final int id_apprisk_title=0x7f090032;
-        public static final int id_assess_button=0x7f090025;
-        public static final int id_bluetooth_status=0x7f090028;
-        public static final int id_bootloader_false=0x7f09001c;
-        public static final int id_bootloader_radio=0x7f09001a;
-        public static final int id_bootloader_status=0x7f090019;
-        public static final int id_bootloader_true=0x7f09001b;
-        public static final int id_chart=0x7f090033;
-        public static final int id_config_detail=0x7f090030;
-        public static final int id_encrypted_status=0x7f09002b;
-        public static final int id_location_status=0x7f09002c;
-        public static final int id_lock_status=0x7f090029;
-        public static final int id_main_layout=0x7f090014;
-        public static final int id_nfc_status=0x7f090027;
-        public static final int id_root_status=0x7f090026;
-        public static final int id_sdencrypt_false=0x7f090020;
-        public static final int id_sdencrypt_radio=0x7f09001e;
-        public static final int id_sdencrypt_status=0x7f09001d;
-        public static final int id_sdencrypt_true=0x7f09001f;
-        public static final int id_seccon_chart=0x7f090031;
-        public static final int id_seccon_title=0x7f09002f;
-        public static final int id_simlock_status=0x7f09002d;
-        public static final int id_simpin_radio=0x7f090022;
-        public static final int id_simpin_status=0x7f090021;
-        public static final int id_simpin_true=0x7f090023;
-        public static final int id_simpint_false=0x7f090024;
-        public static final int id_unknown_status=0x7f09002a;
-        public static final int id_verify_false=0x7f090018;
-        public static final int id_verify_radio=0x7f090016;
-        public static final int id_verify_status=0x7f090015;
-        public static final int id_verify_true=0x7f090017;
-        public static final int id_wifi_history=0x7f09002e;
-        public static final int layout_ignore=0x7f090011;
-        public static final int layout_ignore_main=0x7f090010;
-        public static final int listviewapplicationname=0x7f090009;
-        public static final int listviewapplicationnameimage=0x7f090008;
-        public static final int listviewcategorytext=0x7f09000e;
-        public static final int listviewpermissiontext=0x7f090039;
-        public static final int main_layout=0x7f090013;
-        public static final int menu_exportcsv=0x7f09003c;
-        public static final int menu_preferences=0x7f09003b;
-        public static final int menu_update=0x7f09003a;
-        public static final int permission_detail_application_count=0x7f090037;
-        public static final int permission_detail_application_list=0x7f090038;
-        public static final int permission_detail_description=0x7f090036;
-        public static final int permission_detail_name=0x7f090035;
-        public static final int textView1=0x7f090012;
-        public static final int tvContent=0x7f09000f;
+        public static final int application_detail_label=0x7f0a0001;
+        public static final int application_detail_manage_button=0x7f0a0000;
+        public static final int application_detail_name=0x7f0a0004;
+        public static final int application_detail_permission_count=0x7f0a0006;
+        public static final int application_detail_permission_list=0x7f0a0007;
+        public static final int application_detail_system=0x7f0a0002;
+        public static final int application_detail_version=0x7f0a0005;
+        public static final int application_export_csv_button=0x7f0a0003;
+        public static final int button_refresh=0x7f0a0032;
+        public static final int category_detail_application_count=0x7f0a000c;
+        public static final int category_detail_application_list=0x7f0a000d;
+        public static final int category_detail_description=0x7f0a000b;
+        public static final int category_detail_name=0x7f0a000a;
+        public static final int display_spinner=0x7f0a0031;
+        public static final int id_app_list=0x7f0a0033;
+        public static final int id_apprisk_title=0x7f0a002d;
+        public static final int id_assess_button=0x7f0a0027;
+        public static final int id_bootloader_false=0x7f0a001e;
+        public static final int id_bootloader_radio=0x7f0a001c;
+        public static final int id_bootloader_status=0x7f0a001b;
+        public static final int id_bootloader_true=0x7f0a001d;
+        public static final int id_chart=0x7f0a002f;
+        public static final int id_config_detail=0x7f0a0029;
+        public static final int id_display_title=0x7f0a0030;
+        public static final int id_main_layout=0x7f0a0014;
+        public static final int id_overall_config=0x7f0a002a;
+        public static final int id_overall_risk=0x7f0a002e;
+        public static final int id_part1=0x7f0a0015;
+        public static final int id_part2=0x7f0a002c;
+        public static final int id_sdencrypt_false=0x7f0a0022;
+        public static final int id_sdencrypt_radio=0x7f0a0020;
+        public static final int id_sdencrypt_status=0x7f0a001f;
+        public static final int id_sdencrypt_true=0x7f0a0021;
+        public static final int id_seccon_chart=0x7f0a002b;
+        public static final int id_seccon_title=0x7f0a0028;
+        public static final int id_simpin_radio=0x7f0a0024;
+        public static final int id_simpin_status=0x7f0a0023;
+        public static final int id_simpin_true=0x7f0a0025;
+        public static final int id_simpint_false=0x7f0a0026;
+        public static final int id_verify_false=0x7f0a001a;
+        public static final int id_verify_radio=0x7f0a0018;
+        public static final int id_verify_status=0x7f0a0017;
+        public static final int id_verify_true=0x7f0a0019;
+        public static final int layout_ignore=0x7f0a0011;
+        public static final int layout_ignore_main=0x7f0a0010;
+        public static final int listviewapplicationname=0x7f0a0009;
+        public static final int listviewapplicationnameimage=0x7f0a0008;
+        public static final int listviewcategorytext=0x7f0a000e;
+        public static final int listviewpermissiontext=0x7f0a0038;
+        public static final int main_layout=0x7f0a0013;
+        public static final int menu_exportcsv=0x7f0a0039;
+        public static final int permission_detail_application_count=0x7f0a0036;
+        public static final int permission_detail_application_list=0x7f0a0037;
+        public static final int permission_detail_description=0x7f0a0035;
+        public static final int permission_detail_name=0x7f0a0034;
+        public static final int prolog=0x7f0a0016;
+        public static final int textView1=0x7f0a0012;
+        public static final int tvContent=0x7f0a000f;
     }
     public static final class layout {
         public static final int application_detail=0x7f030000;
@@ -101,7 +101,7 @@ public final class R {
         public static final int title_bar=0x7f030009;
     }
     public static final class menu {
-        public static final int menu=0x7f080000;
+        public static final int menu=0x7f090000;
     }
     public static final class string {
         public static final int alert_database_nottodate_no=0x7f06000f;
@@ -380,11 +380,11 @@ public final class R {
         public static final int wifi_history=0x7f060008;
     }
     public static final class style {
-        public static final int normal_text=0x7f070003;
-        public static final int param_title=0x7f070004;
-        public static final int sub_title=0x7f070002;
-        public static final int tab=0x7f070001;
-        public static final int title=0x7f070000;
+        public static final int normal_text=0x7f080003;
+        public static final int param_title=0x7f080004;
+        public static final int sub_title=0x7f080002;
+        public static final int tab=0x7f080001;
+        public static final int title=0x7f080000;
     }
     public static final class xml {
         public static final int preference=0x7f040000;

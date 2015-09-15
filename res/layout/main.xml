@@ -53,6 +53,23 @@
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
      <TextView
+		android:id="@+id/id_part1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="#0000A0"
+        android:text="PART 1"/>
+     <TextView
+		android:id="@+id/prolog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sebelum Anda mendapatkan hasil penilaian tingkat keamanan konfigurasi, Anda perlu menjawab beberapa pertanyaan terkait konfigurasi smartphone berikut."/>
+     <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="@android:color/darker_gray"/>
+     <TextView
 		android:id="@+id/id_verify_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -164,81 +181,82 @@
         android:id="@+id/id_assess_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Assess Security Configuration Level"/>
-     
-    <TextView
-		android:id="@+id/id_root_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/root_status"/>
-    <TextView
-		android:id="@+id/id_nfc_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nfc_status"/>
-    <TextView
-		android:id="@+id/id_bluetooth_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nfc_status"/>
-    <TextView
-		android:id="@+id/id_lock_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="@string/lock_status"/>
-    <TextView
-		android:id="@+id/id_unknown_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/id_lock_status"/> 
-    <TextView
-		android:id="@+id/id_encrypted_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="@string/encrypted_status"/>
-	<TextView
-		android:id="@+id/id_location_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/location_status"/>
-	<TextView
-		android:id="@+id/id_simlock_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/simlock_status"/>
-	<TextView
-		android:id="@+id/id_wifi_history"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""/>
-	<TextView
+        android:text="OK"/>
+   
+    
+   <TextView
 		android:id="@+id/id_seccon_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/seccon_title"/>
-	<TextView
+        android:textSize="16dp"
+        android:text="@string/seccon_title"/> 
+   <TextView
         android:id="@+id/id_config_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>  
+	<TextView
+        android:id="@+id/id_overall_config"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#00FF00"
+        android:textSize="16dp"/>
 	<com.github.mikephil.charting.charts.RadarChart
         android:id="@+id/id_seccon_chart"
         android:layout_width="350dp"
         android:layout_height="350dp" />
+	
+	<View
+	    android:layout_width="fill_parent"
+	    android:layout_height="5dp"
+	    android:background="@android:color/darker_gray"/>
+	<TextView
+		android:id="@+id/id_part2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="#0000A0"
+        android:text="PART 2"/>
 	<TextView
 		android:id="@+id/id_apprisk_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textStyle="bold"
+        android:textSize="16dp"
         android:text="@string/apprisk_title"/>
-	
+	<TextView
+        android:id="@+id/id_overall_risk"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ov"
+        android:textColor="#FF0000"
+        android:textSize="16dp"/>
 	 <com.github.mikephil.charting.charts.RadarChart
         android:id="@+id/id_chart"
         android:layout_width="350dp"
         android:layout_height="350dp"/>
+	 <TextView
+		android:id="@+id/id_display_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Tampilkan rincian berdasarkan :"/>
+	 <Spinner
+    	android:id="@+id/display_spinner"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:entries="@array/display_arrays" />
+	 <Button
+	    android:id="@+id/button_refresh"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:text="Refresh"
+	     />
 	 <TextView
 		android:id="@+id/id_app_list"
         android:layout_width="wrap_content"

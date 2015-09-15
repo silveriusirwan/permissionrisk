@@ -10,11 +10,15 @@
 	<string name="location_status">location_status</string>
 	<string name="simlock_status">simlock_status</string>
 	<string name="wifi_history">wifi_history</string>
-	<string name="seccon_title"><br><br></br></br><b><u>Hasil Penilaian Security Configuration Level</u></b></string>
-	<string name="apprisk_title"><b><u>Hasil Penilaian Sensitive Data Risk Level</u></b></string>
-	<string name="ignore_title"><b><u>Application Ignore List</u></b></string>
+	<string name="seccon_title"><br><br></br></br><b><u>Hasil Penilaian Keamanan Konfigurasi</u></b></string>
+	<string name="apprisk_title"><b><u>Hasil Penilaian Risiko Data Sensitif</u></b></string>
+	<string name="ignore_title"><b><u>Exception List</u></b></string>
+	<string-array name="display_arrays">
+        <item>Kategori</item>
+        <item>Aplikasi</item>
+    </string-array>
 	<!-- BN add - END -->
-    <string name="app_name">Smartphone Risk Assessment</string>
+    <string name="app_name">Smartphone Risk Assessment (SRA)</string>
     <string name="alert_database_nottodate_text">Database is not up to date, do you want to update it ?</string>
     <string name="alert_database_nottodate_yes">Yes</string>
     <string name="alert_database_nottodate_no">No</string>
